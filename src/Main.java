@@ -65,10 +65,8 @@ public class Main {
                                         + hd[i].kiemTraLuongTonKho(khoiLuongTonKho));
                         System.out.println("Hóa đơn có được giảm giá không?: "
                                         + hd[i].kiemTraHoaDonCoDuocGiamGia(giamGia));
-                        System.out.println(
-                                        "Số tiên được giảm giá của hóa đơn là: " + hd[i].tinhSoTienDuocGiam(phanTram));
                         System.out.println("Tổng tiền sau khi được giảm giá là: "
-                                        + hd[i].tinhTongTienSauKhiDuocGiam());
+                                        + hd[i].tinhTongTienSauKhiDuocGiamGia());
                         System.out.println("\n------------------------\n");
                 }
 

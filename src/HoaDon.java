@@ -1,10 +1,7 @@
-/**
- * HoaDon
- */
 public class HoaDon {
-
         private String tenLoaiCaPhe;
-        private double gia, khoiLuong, giamGia, phanTram;
+        private double gia, khoiLuong, giamGia;
+        private int phanTram;
 
         public HoaDon(String tenLoaiCaPhe, double gia, double khoiLuong) {
                 this.tenLoaiCaPhe = tenLoaiCaPhe;
@@ -36,19 +33,22 @@ public class HoaDon {
                 this.khoiLuong = khoiLuong;
         }
 
+        /**
+         * tinhTongTien()
+         */
         public long tinhTongTien() {
                 return (long) Math.round(gia * khoiLuong);
         }
 
         /**
-         * kiemTraLuongTonKho
+         * kiemTraLuongTonKho(double tonKho)
          */
-        public boolean kiemTraLuongTonKho(double luongTonKho) {
-                return khoiLuong > luongTonKho;
+        public boolean kiemTraLuongTonKho(double tonKho) {
+                return khoiLuong < tonKho;
         }
 
         /**
-         * kiemTraHoaDonCoDuocGiamGia(double giamGia)
+         * kiemTraHoaDonCoDuocGiamGia
          */
         public boolean kiemTraHoaDonCoDuocGiamGia(double giamGia) {
                 this.giamGia = giamGia;
@@ -56,16 +56,17 @@ public class HoaDon {
         }
 
         /**
-         * tinhSoTienDuocGiam(double phanTram)
+         * tinhSoTienDuocGiamGia(int phanTram)
          */
-        public double tinhSoTienDuocGiam(double phanTram) {
+        public long tinhSoTienDuocGiamGia(int phanTram) {
                 this.phanTram = phanTram;
-                return (kiemTraHoaDonCoDuocGiamGia(giamGia)
-                                ? (long) Math.round(((tinhTongTien() * phanTram) / 100))
-                                : (long) 0);
+                return (kiemTraHoaDonCoDuocGiamGia(giamGia)) ? Math.round((tinhTongTien() * phanTram) / 100) : 0;
         }
 
-        public long tinhTongTienSauKhiDuocGiam() {
-                return (long) Math.round(tinhTongTien() - tinhSoTienDuocGiam(phanTram));
+        /**
+         * tongTienSauKhiDuocGiamGia()
+         */
+        public long tinhTongTienSauKhiDuocGiamGia() {
+                return (long) Math.round(tinhTongTien() - tinhSoTienDuocGiamGia(phanTram));
         }
 }
