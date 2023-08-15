@@ -13,6 +13,13 @@ public class Animal {
         }
 
         /**
+         * sound()
+         */
+        public void sound() {
+                System.out.println("HuHu");
+        }
+
+        /**
          * ngu()
          */
         public void sleep() {
@@ -26,4 +33,5 @@ public class Animal {
         public void setName(String name) {
                 this.name = name;
         }
+
 }
