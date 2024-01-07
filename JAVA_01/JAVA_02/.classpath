@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry excluding="src/NTT/|src/Cay Nhi Phan/CayNhiPhan/src/|src/" kind="src" path=""/>
+	<classpathentry excluding="NTT/|Cay Nhi Phan/CayNhiPhan/src/" kind="src" path="src"/>
+	<classpathentry kind="src" path="src/Cay Nhi Phan/CayNhiPhan/src"/>
+	<classpathentry kind="src" path="src/NTT"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
