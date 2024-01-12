@@ -1,6 +1,8 @@
 package Controller;
 
+import java.awt.Color;
 import java.awt.Component;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
@@ -21,6 +23,7 @@ public class Controller implements ActionListener {
 	viewDangKy viewDangKy;
 	ViewGhiChu viewGhiChu;
 	modelTaiKhoan modelTaiKhoan = null;
+	static int coChu = 20;
 
 	public Controller(ViewGhiChu viewGhiChu) {
 		this.viewGhiChu = viewGhiChu;
@@ -70,6 +73,7 @@ public class Controller implements ActionListener {
 						// Tiến hành cập nhật ndung theo tài khoản người dùng
 						viewGhiChu.layNoiDung(doiTuongTrongDB);
 						thongBao(loaiThongBao, "Đăng nhập thành công!", viewDangKy);
+						// Chỉnh cỡ chữ ban đầu
 						viewDangNhap.dispose();
 					}
 				} else {
@@ -122,7 +126,20 @@ public class Controller implements ActionListener {
 
 		case "Xóa ghi chú":
 			this.viewGhiChu.xoaFile();
+
+		case "Tăng cỡ chữ":
+			coChu += 3;
+			this.viewGhiChu.textAreaNoiDung.setFont(new Font("Arial", Font.PLAIN, coChu));
+			break;
+		case "Giảm cỡ chữ":
+			coChu -= 3;
+			this.viewGhiChu.textAreaNoiDung.setFont(new Font("Arial", Font.PLAIN, coChu));
+			break;
+		case "Vàng":
+			this.viewGhiChu.textAreaNoiDung.setBackground(Color.yellow);
+			break;
 		}
+
 	}
 
 	// Tìm kiếm tài khoản dựa vào taiKhoan người dùng
@@ -131,8 +148,6 @@ public class Controller implements ActionListener {
 		Query query = session.createQuery("from modelTaiKhoan");
 		List<modelTaiKhoan> list = query.getResultList();
 		session.close();
-		// Đăng ký
-		// Điều kiện: Tài khoản chưa có trong db
 		for (int i = 0; i < list.size(); i++) {
 			if (taiKhoan.equals(list.get(i).getTaiKhoan())) {
 				return list.get(i);

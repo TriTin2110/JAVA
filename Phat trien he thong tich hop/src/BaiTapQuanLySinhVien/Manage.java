@@ -1,18 +1,20 @@
 package BaiTapQuanLySinhVien;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Scanner;
+import java.util.Set;
 
 import MyAPI.StringController;
 
 /*Manage là lớp generic nhận */
 
 class Manage<E> implements Functional<E> {
-	private ArrayList<E> list;
+	private Set<E> list;
 	private Object object;
 
 	public Manage() {
-		this.list = new ArrayList<E>();
+		this.list = new HashSet<E>();
 	}
 
 	@Override

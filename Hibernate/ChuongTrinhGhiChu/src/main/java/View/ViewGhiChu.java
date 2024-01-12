@@ -3,6 +3,7 @@ package View;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
@@ -88,6 +89,15 @@ public class ViewGhiChu extends JFrame {
 		JMenu mnKichCoChu = new JMenu("Kích cỡ chữ");
 		mnChinhSua.add(mnKichCoChu);
 
+		JMenuItem mntmTangCoChu = new JMenuItem("Tăng cỡ chữ");
+		mnKichCoChu.add(mntmTangCoChu);
+		mntmTangCoChu.addActionListener(controller);
+
+		JMenuItem mntmGiamCoChu = new JMenuItem("Giảm cỡ chữ");
+		mntmGiamCoChu.addActionListener(controller);
+		mnKichCoChu.add(mntmGiamCoChu);
+		mnKichCoChu.addActionListener(controller);
+
 		JMenu mnKieuFontChu = new JMenu("Kiểu font chữ");
 		mnChinhSua.add(mnKieuFontChu);
 
@@ -96,6 +106,10 @@ public class ViewGhiChu extends JFrame {
 
 		JMenu mnMauNen = new JMenu("Màu nền");
 		mnChinhSua.add(mnMauNen);
+
+		JMenuItem mntmNenVang = new JMenuItem("Vàng");
+		mnMauNen.add(mntmNenVang);
+		mntmNenVang.addActionListener(controller);
 
 		JMenu mnMauChu = new JMenu("Màu chữ");
 		mnChinhSua.add(mnMauChu);
@@ -181,6 +195,7 @@ public class ViewGhiChu extends JFrame {
 		this.setTitle("Chương trình ghi chú beta v2.0");
 		this.setLocationRelativeTo(null);
 		this.setVisible(true);
+		textAreaNoiDung.setFont(new Font("Aria", Font.PLAIN, 20));
 	}
 
 	private static void addPopup(Component component, final JPopupMenu popup) {
@@ -264,11 +279,13 @@ public class ViewGhiChu extends JFrame {
 
 //	Lưu nội dung
 	public void luuNoiDung() {
+		// this.modelGhiChu = đối tượng hiện tại đang sử dụng
 		modelGhiChu modelGhiChu = this.modelGhiChu;
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		modelGhiChu modelGC = session.get(modelGhiChu.getClass(), modelGhiChu.getId());
 		modelGC.setTieuDe(textFieldTieuDe.getText());
 		modelGC.setNoiDung(textAreaNoiDung.getText());
+		// Lỗi khi lưu cả tài khoản người dùng
 		modelGC.setChayLanDau(false);
 		modelGC.setTaiKhoan(modelGhiChu.getTaiKhoan());
 		session.beginTransaction();

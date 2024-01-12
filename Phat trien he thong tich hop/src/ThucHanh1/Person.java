@@ -1,12 +1,8 @@
-package BaiTapQuanLySinhVien;
+package ThucHanh1;
 
 class Person {
 	private String name;
 	private int age, id;
-
-	public Person(int id) {
-		this.id = id;
-	}
 
 	public Person(String name, int age, int id) {
 		this.name = name;
@@ -38,15 +34,4 @@ class Person {
 		this.id = id;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Person other = (Person) obj;
-		return id == other.id;
-	}
 }
