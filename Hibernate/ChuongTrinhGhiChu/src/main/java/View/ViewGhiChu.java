@@ -287,7 +287,8 @@ public class ViewGhiChu extends JFrame {
 		modelGC.setNoiDung(textAreaNoiDung.getText());
 		// Lỗi khi lưu cả tài khoản người dùng
 		modelGC.setChayLanDau(false);
-		modelGC.setTaiKhoan(modelGhiChu.getTaiKhoan());
+		if (modelGC.isChayLanDau())
+			modelGC.setTaiKhoan(modelGhiChu.getTaiKhoan());
 		session.beginTransaction();
 		session.save(modelGC);
 		session.getTransaction().commit();
