@@ -17,4 +17,12 @@ public class StringController {
 		}
 		return result;
 	}
+
+	public static boolean checkNumbericString(String str) {
+		for (int i = 0; i < str.length(); i++) {
+			if (!Character.isDigit(str.charAt(i)))
+				return false;
+		}
+		return true;
+	}
 }

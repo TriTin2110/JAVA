@@ -9,6 +9,7 @@ import java.net.Socket;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -52,6 +53,7 @@ public class Client extends JFrame {
 		contentPane.add(scrollPane);
 
 		JTextArea textAreaResult = new JTextArea();
+		textAreaResult.setFont(new Font("Monospaced", Font.PLAIN, 24));
 		scrollPane.setViewportView(textAreaResult);
 
 		JButton btnAdd = new JButton("Thêm SP");
@@ -77,11 +79,54 @@ public class Client extends JFrame {
 		btnDelete.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		btnDelete.setBounds(218, 336, 127, 40);
 		contentPane.add(btnDelete);
+		btnDelete.addActionListener(e -> {
+			try {
+				Socket socket = new Socket("localhost", 1026);
+				PrintWriter pw = new PrintWriter(socket.getOutputStream());
+				BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+				pw.println("Xóa");
+				pw.flush();
+
+				String messageFromServer = br.readLine();
+				if (!messageFromServer.equals("") && !messageFromServer.equals("null")) {
+					JOptionPane.showMessageDialog(this, messageFromServer, "Thông báo", JOptionPane.PLAIN_MESSAGE);
+				} else if (!messageFromServer.equals("")) {
+					JOptionPane.showMessageDialog(this, "Sản phẩm không tồn tại trong danh sách!", "Thông báo",
+							JOptionPane.PLAIN_MESSAGE);
+				}
+				socket.close();
+			} catch (Exception e3) {
+				// TODO: handle exception
+			}
+
+		});
 
 		JButton btnModify = new JButton("Sửa");
 		btnModify.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		btnModify.setBounds(413, 336, 127, 40);
 		contentPane.add(btnModify);
+		btnModify.addActionListener(e -> {
+			try {
+				Socket socket = new Socket("localhost", 1026);
+				PrintWriter pw = new PrintWriter(socket.getOutputStream());
+				BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+				pw.println("Sửa");
+				pw.flush();
+
+				String serverMessage = br.readLine();
+				if (!serverMessage.equals("") && !serverMessage.equals("null")) {
+					JOptionPane.showMessageDialog(this, serverMessage, "Thông báo", JOptionPane.PLAIN_MESSAGE);
+				} else if (!serverMessage.equals("")) {
+					JOptionPane.showMessageDialog(this, "Sản phẩm không tồn tại trong danh sách!", "Thông báo",
+							JOptionPane.PLAIN_MESSAGE);
+				}
+
+				socket.close();
+			} catch (Exception e3) {
+				// TODO: handle exception
+			}
+
+		});
 
 		JButton btnPrintList = new JButton("In DS");
 		btnPrintList.setFont(new Font("Tahoma", Font.PLAIN, 18));

@@ -1,6 +1,9 @@
 package JDBC.BaiTapQuanLySanPham;
 
 import java.awt.Font;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -8,6 +11,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
+
+import JDBC.JDBCUtil;
+import MyAPI.StringController;
 
 public class ClientAddProduct extends JFrame {
 
@@ -95,11 +101,20 @@ public class ClientAddProduct extends JFrame {
 		contentPane.add(btnAdd);
 		this.setVisible(true);
 		this.setLocationRelativeTo(null);
+		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 
 		btnAdd.addActionListener(e -> {
-			this.setId(Integer.parseInt(textFieldProductId.getText()));
+			if (!StringController.checkNumbericString(textFieldProductId.getText()))
+				this.setId(getLastProductId());
+			else {
+				this.setId(Integer.parseInt(textFieldProductId.getText()));
+			}
+			if (!StringController.checkNumbericString(textFieldProductPrice.getText())) {
+				this.setPrice(0);
+			} else {
+				this.setPrice(Long.parseLong(textFieldProductPrice.getText()));
+			}
 			this.setName(textFieldProductName.getText());
-			this.setPrice(Long.parseLong(textFieldProductPrice.getText()));
 
 			// Tạo đối tượng controller mới để gọi phương thức thêm sản phẩm
 			Controller.getInstance().addProduct(this);
@@ -114,5 +129,25 @@ public class ClientAddProduct extends JFrame {
 			this.dispose();
 			new Client();
 		});
+	}
+
+	public int getLastProductId() {
+		int id = 0;
+		try {
+			Connection connection = JDBCUtil.getConnect();
+			String sql = "select id from product";
+			Statement statement = connection.createStatement();
+			ResultSet resultSet = statement.executeQuery(sql);
+			while (resultSet.next()) {
+				if (resultSet.isLast())
+					id = resultSet.getInt("id") + 1;
+			}
+			JDBCUtil.closeConnect(connection);
+		} catch (
+
+		Exception e) {
+			// TODO: handle exception
+		}
+		return id;
 	}
 }

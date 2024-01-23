@@ -5,6 +5,10 @@ class Product {
 	private String name;
 	private long price;
 
+	public Product(int id) {
+		this.id = id;
+	}
+
 	public Product(int id, String name, long price) {
 		this.id = id;
 		this.name = name;
