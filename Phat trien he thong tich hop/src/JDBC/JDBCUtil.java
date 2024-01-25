@@ -10,7 +10,7 @@ public class JDBCUtil {
 		Connection c = null;
 		try {
 			DriverManager.registerDriver(new com.mysql.jdbc.Driver());
-			String url = "jdbc:mysql://127.0.0.1:3306/productjdbc";
+			String url = "jdbc:mysql://127.0.0.1:3306/lab4";
 			String user = "sa";
 			String password = "nguyentritin123";
 			c = DriverManager.getConnection(url, user, password);
