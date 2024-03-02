@@ -12,22 +12,20 @@ create table model_type_of_book(
     type_name nvarchar(512)
 );
 
-CREATE TABLE model_book (
-    book_ID VARCHAR(512) PRIMARY KEY NOT NULL,
-    book_name NVARCHAR(512),
-    book_language VARCHAR(120),
-    book_description TEXT,
-    public_year INT,
-    quantity INT,
-    import_price LONG,
-    price LONG,
-    outport_price LONG,
-    type_of_book_ID VARCHAR(512),
-    author_ID VARCHAR(512),
-    CONSTRAINT FK_type_ID FOREIGN KEY (type_of_book_ID)
-        REFERENCES model_type_of_book (type_ID),
-    CONSTRAINT FK_author_ID FOREIGN KEY (author_ID)
-        REFERENCES model_author (author_ID)
+create table model_book(
+	book_ID varchar(512) primary key not null,
+    book_name nvarchar(512),
+    book_language varchar(120),
+    book_description text,
+	public_year int,
+    quantity int,
+    import_price long,
+    price long,
+    outport_price long,
+    type_of_book_ID varchar(512),
+    author_ID varchar(512),
+    constraint FK_type_ID foreign key (type_of_book_ID) references  model_type_of_book (type_ID),
+    constraint FK_author_ID foreign key(author_ID) references model_author(author_ID)
 );
 
 create table model_customer(
@@ -62,7 +60,7 @@ create table model_order(
 
 create table model_order_detail(
 	order_detail_ID varchar(512) primary key,
-	book_ID varchar(512),model_author,
+	book_ID varchar(512),
     cover_price long,
     discount long,
     sell_price long,
@@ -72,3 +70,4 @@ create table model_order_detail(
     order_ID varchar(512),
     constraint FK_order_ID foreign key (order_ID) references model_order(order_ID)
 );
+select * from mod;

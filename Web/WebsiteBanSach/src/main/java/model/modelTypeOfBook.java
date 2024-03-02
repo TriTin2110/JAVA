@@ -1,28 +1,36 @@
 package model;
 
 public class modelTypeOfBook {
-        private String typeID, typeName;
+	private String typeID, typeName;
 
-        public modelTypeOfBook(String typeID, String typeName) {
-                this.typeID = typeID;
-                this.typeName = typeName;
-        }
+	public modelTypeOfBook(String typeID) {
+		this.typeID = typeID;
+	}
 
-        public String getTypeID() {
-                return typeID;
-        }
+	public modelTypeOfBook(String typeID, String typeName) {
+		this.typeID = typeID;
+		this.typeName = typeName;
+	}
 
-        public void setTypeID(String typeID) {
-                this.typeID = typeID;
-        }
+	public String getTypeID() {
+		return typeID;
+	}
 
-        public String getTypeName() {
-                return typeName;
-        }
+	public void setTypeID(String typeID) {
+		this.typeID = typeID;
+	}
 
-        public void setTypeName(String typeName) {
-                this.typeName = typeName;
-        }
-        
-        
+	public String getTypeName() {
+		return typeName;
+	}
+
+	public void setTypeName(String typeName) {
+		this.typeName = typeName;
+	}
+
+	@Override
+	public String toString() {
+		return "modelTypeOfBook [typeID=" + typeID + ", typeName=" + typeName + "]";
+	}
+
 }
