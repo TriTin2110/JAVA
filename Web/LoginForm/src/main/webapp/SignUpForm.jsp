@@ -9,7 +9,7 @@
 </head>
 <body>
 	<div id="UserForm">
-		<h1>Đăng ký tài khoản</h1>
+		<h1>Đăng kí</h1>
 		<form action="ProcessSignUp" method="post">
 			<div class="FormContent">
 				<label for="userName">Tài khoản:</label>
@@ -21,7 +21,7 @@
 				<input id="userPassword" name="userPassword" type="password"/>
 			</div>
 			<div style="margin-bottom: 20px;">
-				<input type="submit" value="Đăng ký" onclick="checking()"/>
+				<input type="submit" value="Đăng ký"/>
 			</div>
 			<div >
 				<a href="LoginForm.jsp">Đăng nhập</a>

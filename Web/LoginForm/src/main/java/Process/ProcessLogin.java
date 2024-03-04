@@ -56,15 +56,18 @@ public class ProcessLogin extends HttpServlet {
 
 	public boolean findingUserAccount(String userName, String userPassword) {
 		Connection connection = JDBCUtil.getConnection();
+		boolean checking = false;
 		try {
-			String sql = "select * from UserAccount where userName = ?";
+			String sql = "select * from UserAccount where userName = ? and userPassword = ?";
 			PreparedStatement preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setString(1, userName);
+			preparedStatement.setString(2, userPassword);
 			ResultSet resultSet = preparedStatement.executeQuery();
-			while (resultSet.next()) {
+			out: while (resultSet.next()) {
 				// Lấy userName của từng dòng
 				// Nếu userName != rỗng thì sẽ dừng tìm kiếm và trả về true
 				if (!resultSet.getString("userName").equals("")) {
+					System.out.println(resultSet.getString("userName"));
 					JDBCUtil.closeConnection(connection);
 					return true;
 				}
