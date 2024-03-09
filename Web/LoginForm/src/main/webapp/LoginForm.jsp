@@ -12,7 +12,7 @@
 		<h1>Đăng nhập</h1>
 		<form action="ProcessLogin" method="post">
 			<div class="FormContent">
-				<label for="userName">Tài khoản:</label>
+				<label for="userName" onclick="checkingInput()">Tài khoản:</label>
 				<input id="userName" name="userName" type="text"/>
 			</div>
 				
@@ -30,3 +30,8 @@
 	</div>
 </body>
 </html>
+<script type="text/javascript">
+	function checkingInput() {
+		
+	}
+</script>

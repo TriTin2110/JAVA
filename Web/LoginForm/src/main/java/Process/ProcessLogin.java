@@ -56,7 +56,6 @@ public class ProcessLogin extends HttpServlet {
 
 	public boolean findingUserAccount(String userName, String userPassword) {
 		Connection connection = JDBCUtil.getConnection();
-		boolean checking = false;
 		try {
 			String sql = "select * from UserAccount where userName = ? and userPassword = ?";
 			PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -67,7 +66,6 @@ public class ProcessLogin extends HttpServlet {
 				// Lấy userName của từng dòng
 				// Nếu userName != rỗng thì sẽ dừng tìm kiếm và trả về true
 				if (!resultSet.getString("userName").equals("")) {
-					System.out.println(resultSet.getString("userName"));
 					JDBCUtil.closeConnection(connection);
 					return true;
 				}

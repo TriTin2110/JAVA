@@ -17,45 +17,47 @@ class OperateProduct extends UnicastRemoteObject implements ManagerProduct {
 	@Override
 	public int addProduct(ModelProduct modelProduct) throws RemoteException {
 		// TODO Auto-generated method stub
+		int result = 0;
 		try {
 			Connection connection = getConnection();
 			String sql = "insert into Product values (?, ?, ?)";
-			PreparedStatement preparedStatement = connection.prepareStatement(sql);
-			preparedStatement.setString(1, modelProduct.getId());
-			preparedStatement.setString(2, modelProduct.getProductName());
-			preparedStatement.setLong(3, modelProduct.getPrice());
-			return preparedStatement.executeUpdate();
+			PreparedStatement pr = connection.prepareStatement(sql);
+			pr.setString(1, modelProduct.getId());
+			pr.setString(2, modelProduct.getProductName());
+			pr.setLong(3, modelProduct.getPrice());
+			result = pr.executeUpdate();
+			closeConnection(connection);
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
-		return 0;
+		return result;
 	}
 
 	@Override
 	public int deleteProduct(String id) throws RemoteException {
 		// TODO Auto-generated method stub
+		int result = 0;
 		if (searchingProduct(id) != null) {
 			try {
 				Connection connection = getConnection();
 				String sql = "delete from Product where id = ?";
 				PreparedStatement pr = connection.prepareStatement(sql);
 				pr.setString(1, id);
-				int result = pr.executeUpdate();
+				result = pr.executeUpdate();
 				connection.close();
-				return result;
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
-		return 0;
+		return result;
 	}
 
 	@Override
 	public int updateProduct(String id, ModelProduct modelProduct) throws RemoteException {
 		// TODO Auto-generated method stub
+		int result = 0;
 		if (searchingProduct(id) != null) {
-
 			try {
 				Connection connection = getConnection();
 				String sql = "Update Product set product_name = ?, price = ? where id = ?";
@@ -63,21 +65,20 @@ class OperateProduct extends UnicastRemoteObject implements ManagerProduct {
 				pr.setString(1, modelProduct.getProductName());
 				pr.setLong(2, modelProduct.getPrice());
 				pr.setString(3, id);
-				int result = pr.executeUpdate();
-				return result;
+				result = pr.executeUpdate();
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
 		}
-		return 0;
+		return result;
 	}
 
 	@Override
 	public ModelProduct searchingProduct(String id) throws RemoteException {
 		// TODO Auto-generated method stub
-		ModelProduct modelProduct = new ModelProduct();
+		ModelProduct modelProduct = null;
 		try {
 			Connection connection = getConnection();
 			String sql = "select * from Product where id = ?";
@@ -85,19 +86,18 @@ class OperateProduct extends UnicastRemoteObject implements ManagerProduct {
 			pr.setString(1, id);
 			ResultSet resultSet = pr.executeQuery();
 			while (resultSet.next()) {
-				modelProduct.setId(resultSet.getString("id"));
-				modelProduct.setProductName(resultSet.getString("product_name"));
-				modelProduct.setPrice(resultSet.getLong("price"));
+				modelProduct = new ModelProduct(resultSet.getString("id"), resultSet.getString("product_name"),
+						resultSet.getLong("price"));
 				connection.close();
-				return modelProduct;
 			}
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
 		}
-		return null;
+		return modelProduct;
 	}
 
+	@Override
 	public Connection getConnection() {
 		Connection connection = null;
 		try {
@@ -113,6 +113,7 @@ class OperateProduct extends UnicastRemoteObject implements ManagerProduct {
 		return connection;
 	}
 
+	@Override
 	public void closeConnection(Connection connection) {
 		try {
 			connection.close();
