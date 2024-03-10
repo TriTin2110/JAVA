@@ -1,0 +1,157 @@
+Chương trình quản lý mượn trả sách
+========================================================================================================================
+
+- Person:
+	+String: name, id
+	+int: age
+	+long: phone
+
+class ModelPerson
+{
+	attribute(
+		String: name, id
+		int: age
+		long: phone
+	)
+
+	method(
+		Getter, Setter
+	)
+}
+========================================================================================================================
+
+- Book: 
+	+String: idBook, nameBook, kindOfBook, authorID, status(còn sách || hết sách)
+	+int: quantity
+	+Date: publicDay
+
+class ModelBook 
+{
+	attribute(
+		String: idBook, nameBook, kindOfBook, authorID, status
+		int: quantity
+		Date: publicDay
+	)
+
+	method(
+		Getter, Setter
+	)
+}
+
+interface BookInterface
+{
+	addBook(ModelBook modelBook): int
+	removeBook(ModelBook modelBook): int
+	updateBook(ModelBook modelBook): int
+	searchingBook(ModelBook modelBook): ModelBook
+	printListBook(): ArrayList<ModelBook>
+}
+
+========================================================================================================================
+
+- Author extends Person:
+	+String: nameAuthor, country, idAuthor
+	+int: age
+	+long: phone
+
+class ModelAuthor 
+{
+	attribute(
+		String: nameAuthor, country, idAuthor
+		int: age
+		long: phone
+	)
+
+	method(
+		Getter, Setter
+	)
+}
+
+interface AuthorInterface
+{
+	addAuthor(ModelAuthor modelAuthor): int
+	removeAuthor(ModelAuthor modelAuthor): int
+	updateAuthor(ModelAuthor modelAuthor): int
+	searchingAuthor(ModelAuthor modelAuthor): ModelAuthor
+	printListAuthor(): ArrayList<ModelAuthor>
+}
+
+========================================================================================================================
+
+- Student extends Person:
+	+String: idStudent, nameStudent, specialized
+	+int: age
+	+long: phone
+
+class ModelStudent
+{
+	attribute(
+		String: idStudent, nameStudent, specialized
+		int: age
+		long: phone
+	)
+
+	method(
+		Getter, Setter
+	)
+}
+
+interface StudentInterface
+{
+	addStudent(ModelStudent modelStudent): int
+	removeStudent(ModelStudent modelStudent): int
+	updateStudent(ModelStudent modelStudent): int
+	searchingStudent(ModelStudent modelStudent): ModelStudent
+	printListStudent(): ArrayList<ModelStudent>
+}
+========================================================================================================================
+
+- BorrowDetail:
+	+Date: borrowDay, returnDay
+	+String: borrowID, bookID, studentID, expiredStatus("Đã quá hạn", "Còn hạn", "Đã trả sách"), returnStatus("Đã trả sách", "Chưa trả sách")
+
+class ModelBorrowDetail
+{
+	attribute(
+		Date: borrowDay, returnDay
+		String: borrowID, expiredStatus, returnStatus, bookID, studentID
+	)
+
+	method(
+		Getter, Setter
+	)
+}
+
+interface BorrowDetailInterface
+{
+	addBorrowDetail(ModelBorrowDetail modelBorrowDetail): int
+	removeBorrowDetail(ModelBorrowDetail modelBorrowDetail): int
+	updateBorrowDetail(ModelBorrowDetail modelBorrowDetail): int
+	searchingBorrowDetail(ModelBorrowDetail modelBorrowDetail): ModelBorrowDetail
+	printListBorrowDetail(): ArrayList<ModelBorrowDetail>
+}
+
+========================================================================================================================
+*Nếu sinh viên mượn sách thì sẽ THÊM sinh viên vào database*
+*Nếu sinh viên trả sách thì sẽ TỰ ĐỘNG XÓA sinh viên ra khỏi database sau 3 NGÀY hoặc có thể TỰ XÓA*
+*expiredStatus = "Đã quá hạn" khi returnStatus = "Chưa trả sách" và ngày hiện tại > returnDay*
+*expiredStatus = "Còn hạn" khi returnStatus = "Chưa trả sách" và ngày hiện tại < returnDay*
+*expiredStatus = "Đã trả sách" khi returnStatus = "Đã trả sách"*
+*quantity của sách được sinh viên mượn = quantity - 1*
+*Nếu sách nào có quantity = 0 thì sinh viên không thể tiếp tục mượn sách đó*
+*status = "Còn sách" nếu quantity > 0 và "Hết sách" khi quantity < 0*
+*In toàn bộ danh sách ra bảng*
+
+*id sách = (tên viết tắt của sách) + (1 -> n)*
+*id sinh viên = (tên viết tắt nghành) + (1->n)*
+*id tác giả = (1->n)*
+
+========================================Kiểm tra lỗi========================================
+1. Kiểm tra khi tạo tài khoản mới đã tồn tại id trong database hay chưa
+2. Khi cập nhật, xóa, tìm kiếm thì kiểm tra id đã có trong database hay chưa
+3. Khi xóa thì phải kiểm tra khóa ngoại
+4. Khi cập nhật thì không được cập nhật id 
+5. Báo lỗi khi nhập ký tự khác 0..9 đối với những trường có kiểu dữ liệu số 
+6. Table không cho phép chỉnh sửa
+
+
