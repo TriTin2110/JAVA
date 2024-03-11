@@ -147,11 +147,17 @@ interface BorrowDetailInterface
 *id tác giả = (1->n)*
 
 ========================================Kiểm tra lỗi========================================
-1. Kiểm tra khi tạo tài khoản mới đã tồn tại id trong database hay chưa
+1. Kiểm tra khi tạo tài khoản mới đã tồn tại id trong database hay chưa 
 2. Khi cập nhật, xóa, tìm kiếm thì kiểm tra id đã có trong database hay chưa
 3. Khi xóa thì phải kiểm tra khóa ngoại
-4. Khi cập nhật thì không được cập nhật id 
+4. Khi cập nhật thì không được cập nhật id
 5. Báo lỗi khi nhập ký tự khác 0..9 đối với những trường có kiểu dữ liệu số 
-6. Table không cho phép chỉnh sửa
+6. Table không cho phép chỉnh sửa	
 
+
+========================================Các bước để tạo 1 bảng========================================
+1. Tạo RMI cho bảng trong server
+2. Tạo controllerPeform trong MainController
+3. getListBook trong MainController
+4. setTable trong Createtable
 
