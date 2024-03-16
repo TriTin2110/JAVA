@@ -1,0 +1,18 @@
+package MaHoa;
+
+class MainMaHoa {
+
+	public static void main(String[] args) {
+
+		System.out.println("Hãy nhập khóa: ");
+		String secretKey = sc.nextLine();
+		System.out.println("Hãy nhập chuỗi: ");
+		String originalString = sc.nextLine();
+		MaHoaVaGiaiMa testAES = new MaHoaVaGiaiMa();
+		String encryptedString = testAES.encrypt(originalString, secretKey);
+		System.out.println("Encrypt: " + encryptedString);
+		String decryptedString = testAES.decrypt(encryptedString, secretKey);
+		System.out.println("Decrypt: " + decryptedString);
+	}
+
+}

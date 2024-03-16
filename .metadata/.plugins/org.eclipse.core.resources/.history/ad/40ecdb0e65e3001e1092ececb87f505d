@@ -1,0 +1,159 @@
+package main;
+
+import java.awt.BorderLayout;
+import java.awt.EventQueue;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JSeparator;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.TitledBorder;
+
+import Controller.MainController;
+
+public class ClientMainFrame extends JFrame {
+
+	private static final long serialVersionUID = 1L;
+	public JPanel contentPane;
+	public JComboBox<String> comboBoxNameTable;
+	public JPanel panelCenter;
+	public String tableChosen = "";
+	public JComboBox<String> comboBoxSearching;
+	public boolean start = true;
+	public Box horizontalBoxTable;
+	public Server itemListenerServer;
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					ClientMainFrame frame = new ClientMainFrame();
+					frame.setVisible(true);
+					frame.setLocationRelativeTo(null);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	public ClientMainFrame() {
+		ActionListener actionListener = new MainController(this);
+		itemListenerServer = new Server(this);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 500, 350);
+
+		JMenuBar menuBar = new JMenuBar();
+		setJMenuBar(menuBar);
+
+		JMenu mnModify = new JMenu("Chỉnh sửa");
+		menuBar.add(mnModify);
+
+		JMenuItem mntmAdd = new JMenuItem("Thêm");
+		mnModify.add(mntmAdd);
+
+		JMenuItem mntmDelete = new JMenuItem("Xóa");
+		mnModify.add(mntmDelete);
+
+		JMenuItem mntmUpdate = new JMenuItem("Chỉnh sửa");
+		mnModify.add(mntmUpdate);
+
+		JMenuItem mntmSearching = new JMenuItem("Tìm kiếm");
+		mnModify.add(mntmSearching);
+
+		JSeparator separator = new JSeparator();
+		mnModify.add(separator);
+
+		JMenuItem mntmRefresh = new JMenuItem("Tải lại");
+		mnModify.add(mntmRefresh);
+
+		JMenu mnBackup = new JMenu("Sao lưu");
+		menuBar.add(mnBackup);
+		JMenuItem mntmBackup = new JMenuItem("Sao lưu");
+		mnBackup.add(mntmBackup);
+		JMenuItem mntmReading = new JMenuItem("Đọc file");
+		mnBackup.add(mntmReading);
+
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+
+		setContentPane(contentPane);
+		contentPane.setLayout(new BorderLayout(0, 0));
+
+		JPanel panelHeader = new JPanel();
+		contentPane.add(panelHeader, BorderLayout.NORTH);
+		panelHeader.setLayout(new BoxLayout(panelHeader, BoxLayout.X_AXIS));
+
+		horizontalBoxTable = Box.createHorizontalBox();
+		horizontalBoxTable.setBorder(new TitledBorder(null, "B\u1EA3ng", TitledBorder.LEADING, TitledBorder.TOP,
+				new Font("Tahoma", Font.BOLD, 16), null));
+		panelHeader.add(horizontalBoxTable);
+
+		String[] tableAvilable = { "Hãy chọn bảng", "Sách", "Tác giả", "Sinh viên", "Chi tiết mượn" };
+		comboBoxNameTable = new JComboBox<String>(tableAvilable);
+		comboBoxNameTable.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		horizontalBoxTable.add(comboBoxNameTable);
+		comboBoxNameTable.addItemListener(itemListenerServer);
+
+		Box horizontalBoxSearching = Box.createHorizontalBox();
+		horizontalBoxSearching.setBorder(new TitledBorder(null, "T\u00ECm ki\u1EBFm", TitledBorder.LEFT,
+				TitledBorder.TOP, new Font("Tahoma", Font.BOLD, 16), null));
+		panelHeader.add(horizontalBoxSearching);
+
+		comboBoxSearching = new JComboBox<String>();
+		horizontalBoxSearching.add(comboBoxSearching);
+		comboBoxSearching.addItemListener(e -> {
+			MainController mainController = new MainController();
+			// Khi thay đổi bảng thì select item sẽ bị null
+			Object object = this.comboBoxSearching.getSelectedItem();
+			if (e.getStateChange() == ItemEvent.SELECTED) {
+				if (object != null) {
+					mainController.searchingRecord(this, this.tableChosen, object.toString());
+					object = null;
+				}
+			}
+
+		});
+
+		panelCenter = new JPanel() {
+			@Override
+			protected void paintComponent(Graphics g) {
+				// TODO Auto-generated method stub
+				super.paintComponent(g);
+				g.drawImage(new ImageIcon(
+						"D:\\Phan mem\\WebEclipse\\PhatTrienHeThongTichHop\\MuonTraSach\\src\\IMG\\Background.jpg")
+						.getImage(), 0, 0, panelCenter.getWidth(), panelCenter.getHeight(), null);
+			}
+		};
+		contentPane.add(panelCenter, BorderLayout.CENTER);
+		panelCenter.setLayout(new BorderLayout(0, 0));
+
+		mntmAdd.addActionListener(actionListener);
+		mntmDelete.addActionListener(actionListener);
+		mntmUpdate.addActionListener(actionListener);
+		mntmSearching.addActionListener(actionListener);
+		mntmRefresh.addActionListener(actionListener);
+		mntmBackup.addActionListener(actionListener);
+		mntmReading.addActionListener(actionListener);
+		mntmReading.setEnabled(false);
+		this.setTitle("Chương trình quản lí mượn trả sách");
+	}
+
+}

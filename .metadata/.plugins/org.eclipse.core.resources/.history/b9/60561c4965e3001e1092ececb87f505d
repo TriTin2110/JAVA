@@ -1,0 +1,400 @@
+package Controller;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.rmi.Naming;
+
+import javax.swing.JOptionPane;
+
+import Interface.MainInterface;
+import Model.ModelAuthor;
+import Model.ModelBook;
+import Model.ModelBorrowDetail;
+import Model.ModelStudent;
+import MyClass.CheckingConstraint;
+import Window.AddWindow.AddAuthorWindow;
+import Window.AddWindow.AddBookWindow;
+import Window.AddWindow.AddBorrowWindow;
+import Window.AddWindow.AddStudentWindow;
+import Window.ShowInfoWindow.ShowAuthor;
+import Window.ShowInfoWindow.ShowBook;
+import Window.ShowInfoWindow.ShowBorrowDetail;
+import Window.ShowInfoWindow.ShowStudent;
+import Window.UpdateWindow.AuthorUpdateWindow;
+import Window.UpdateWindow.BookUpdateWindow;
+import Window.UpdateWindow.BorrowUpdateWindow;
+import Window.UpdateWindow.StudentUpdateWindow;
+import main.ClientMainFrame;
+
+public class MainController implements ActionListener {
+	private ClientMainFrame clientMainFrame;
+
+	public MainController() {
+	}
+
+	public MainController(ClientMainFrame clientMainFrame) {
+		this.clientMainFrame = clientMainFrame;
+
+	}
+
+	// Nhận lựa chọn của người dùng ngày sau khi chọn item
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		if (this.clientMainFrame.tableChosen == null) {
+			JOptionPane.showMessageDialog(this.clientMainFrame, "Vui lòng chọn bảng", "Lỗi!!!",
+					JOptionPane.ERROR_MESSAGE);
+		} else {
+			String command = e.getActionCommand();
+			processChose(command);
+		}
+
+	}
+
+	// Xử lý lựa chọn của người dùng
+	public void processChose(String command) {
+		String currentTable = this.clientMainFrame.tableChosen;
+		switch (command) {
+		case "Thêm":
+			showwingInput(currentTable);
+			break;
+		case "Xóa":
+			deletingRecord(currentTable);
+			break;
+		case "Chỉnh sửa":
+			updatingRecord(currentTable);
+			break;
+		case "Tìm kiếm":
+			String id = JOptionPane.showInputDialog(this.clientMainFrame,
+					"Hãy nhập id của " + currentTable + " mà bạn muốn tìm kiếm: ", "Tìm kiếm " + currentTable,
+					JOptionPane.QUESTION_MESSAGE);
+			searchingRecord(this.clientMainFrame, this.clientMainFrame.tableChosen, id);
+			break;
+		case "Tải lại":
+			controllerPeform(this.clientMainFrame, currentTable);
+			break;
+		case "Sao lưu":
+			BackupData();
+			break;
+		case "Đọc file":
+			BackupData();
+			break;
+		}
+	}
+
+	// Hiển thị bảng tác giả
+	public void controllerPeform(ClientMainFrame clientMainFrame, String currentTable) {
+		switch (currentTable) {
+
+		// Tạo bảng tác giả
+		case "Author":
+			CreateTable authorController = new CreateTable(clientMainFrame);
+			authorController.getListAuthor(clientMainFrame);
+			break;
+
+		// Tạo bảng sinh viên
+		case "Student":
+			CreateTable studentController = new CreateTable(clientMainFrame);
+			studentController.getListStudent(clientMainFrame);
+			break;
+
+		// Tạo bảng sách
+		case "Book":
+			CreateTable bookController = new CreateTable(clientMainFrame);
+			bookController.getListBook(clientMainFrame);
+			break;
+
+		case "Borrow":
+			CreateTable borrowController = new CreateTable(clientMainFrame);
+			borrowController.getListBorrow(clientMainFrame);
+			break;
+		}
+
+	}
+
+	// Thêm
+	public void showwingInput(String currentTable) {
+		switch (currentTable) {
+		case "Author":
+			new AddAuthorWindow(this.clientMainFrame);
+			break;
+
+		case "Student":
+			new AddStudentWindow(this.clientMainFrame);
+			break;
+
+		case "Book":
+			new AddBookWindow(this.clientMainFrame);
+			break;
+
+		case "Borrow":
+			new AddBorrowWindow(this.clientMainFrame);
+			break;
+		}
+	}
+
+	// Xóa dựa vào id
+	public void deletingRecord(String currentTable) {
+		boolean re = false;
+		MainInterface mainInterface = null;
+		int result = 0;
+		try {
+			mainInterface = (MainInterface) Naming.lookup("rmi://localhost:1026/test");
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		String id = JOptionPane.showInputDialog(this.clientMainFrame,
+				"Hãy nhập id của" + currentTable + " mà bạn muốn xóa:", "Xóa " + currentTable,
+				JOptionPane.QUESTION_MESSAGE);
+		try {
+			switch (currentTable) {
+			case "Author":
+				ModelAuthor modelAuthor = new ModelAuthor(id);
+				if (id != null) {
+					if (mainInterface.searching(modelAuthor, currentTable) == null) {
+						notExits(id, currentTable);
+					}
+					// Kiểm tra tác giả đã có sách nào chưa
+					else if (CheckingConstraint.CheckingAuthorConstraint(modelAuthor) > 0) {
+						ConstraintReporting();
+					} else {
+						result = mainInterface.remove(modelAuthor, currentTable);
+						re = true;
+					}
+				}
+				break;
+
+			case "Student":
+				ModelStudent modelStudent = new ModelStudent(id);
+				if (id != null) {
+					if (mainInterface.searching(modelStudent, currentTable) == null) {
+						notExits(id, currentTable);
+					} else {
+						if (CheckingConstraint.CheckingStudentConstraint(modelStudent) > 0) {
+							ConstraintReporting();
+						} else {
+							result = mainInterface.remove(modelStudent, currentTable);
+							re = true;
+						}
+					}
+				}
+				break;
+
+			case "Book":
+				ModelBook modelBook = new ModelBook(id);
+				if (id != null) {
+					if (mainInterface.searching(modelBook, currentTable) == null) {
+						notExits(id, currentTable);
+					} else {
+						if (CheckingConstraint.CheckingBookConstraint(modelBook) > 0) {
+							ConstraintReporting();
+						} else {
+							result = mainInterface.remove(modelBook, currentTable);
+							re = true;
+						}
+					}
+				}
+				break;
+
+			case "Borrow":
+
+				ModelBorrowDetail modelBorrowDetail = new ModelBorrowDetail(id);
+				if (id != null) {
+					if (mainInterface.searching(modelBorrowDetail, currentTable) == null) {
+						notExits(id, currentTable);
+					} else {
+						result = mainInterface.remove(modelBorrowDetail, currentTable);
+						re = true;
+					}
+				}
+				break;
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		if (re) {
+			JOptionPane.showMessageDialog(this.clientMainFrame, "Đã xóa thành công " + result + " dòng!");
+			System.out.println("===============================");
+		}
+
+	}
+
+	// Đầu tiên kiểm tra xem record có tồn tại hay không
+	public void updatingRecord(String currentTable) {
+		switch (currentTable) {
+		case "Author":
+			try {
+				MainInterface mainInterface = (MainInterface) Naming.lookup("rmi://localhost:1026/test");
+				String id = JOptionPane.showInputDialog(this.clientMainFrame, "Hãy nhập mã của tác giả:",
+						"Cập nhật tác giả", JOptionPane.QUESTION_MESSAGE);
+				ModelAuthor modelAuthor = (ModelAuthor) mainInterface.searching(new ModelAuthor(id),
+						this.clientMainFrame.tableChosen);
+				if (modelAuthor == null)
+					notExits(id, currentTable);
+				else
+					new AuthorUpdateWindow(modelAuthor);
+			} catch (Exception e) {
+				// TODO: handle exception
+				e.printStackTrace();
+			}
+			break;
+
+		case "Student":
+			try {
+				MainInterface mainInterface = (MainInterface) Naming.lookup("rmi://localhost:1026/test");
+				String id = JOptionPane.showInputDialog(this.clientMainFrame, "Hãy nhập mã của sinh viên:",
+						"Cập nhật sinh viên", JOptionPane.QUESTION_MESSAGE);
+				ModelStudent modelStudent = (ModelStudent) mainInterface.searching(new ModelStudent(id),
+						clientMainFrame.tableChosen);
+				if (modelStudent == null)
+					notExits(id, currentTable);
+				else
+					new StudentUpdateWindow(modelStudent);
+
+			} catch (Exception e) {
+				// TODO: handle exception
+				e.printStackTrace();
+			}
+			break;
+
+		case "Book":
+			try {
+				MainInterface mainInterface = (MainInterface) Naming.lookup("rmi://localhost:1026/test");
+				String id = JOptionPane.showInputDialog(this.clientMainFrame, "Hãy nhập mã của sách:", "Cập nhật sách",
+						JOptionPane.QUESTION_MESSAGE);
+				ModelBook modelBook = (ModelBook) mainInterface.searching(new ModelBook(id), currentTable);
+				if (modelBook == null)
+					notExits(id, currentTable);
+				else
+					new BookUpdateWindow(modelBook, id);
+
+			} catch (Exception e) {
+				// TODO: handle exception
+				e.printStackTrace();
+			}
+			break;
+
+		case "Borrow":
+			try {
+				MainInterface mainInterface = (MainInterface) Naming.lookup("rmi://localhost:1026/test");
+				String id = JOptionPane.showInputDialog(this.clientMainFrame, "Hãy nhập mã của chi tiết mượn:",
+						"Cập nhật chi tiết mượn", JOptionPane.QUESTION_MESSAGE);
+				ModelBorrowDetail modelBorrowDetail = (ModelBorrowDetail) mainInterface
+						.searching(new ModelBorrowDetail(id), currentTable);
+				if (modelBorrowDetail == null)
+					notExits(id, currentTable);
+				else
+					new BorrowUpdateWindow(modelBorrowDetail, id);
+
+			} catch (Exception e) {
+				// TODO: handle exception
+				e.printStackTrace();
+			}
+			break;
+		}
+
+	}
+
+	// Tìm kiếm dựa vào id
+	public void searchingRecord(ClientMainFrame clientMainFrame, String currentTable, String id) {
+		// Nếu item được chọn ko phải là "Tìm kiếm"
+		if (!id.contains("Tìm kiếm")) {
+			switch (currentTable) {
+			case "Author":
+				try {
+					MainInterface mainInterface = (MainInterface) Naming.lookup("rmi://localhost:1026/test");
+					ModelAuthor modelAuthor = (ModelAuthor) mainInterface.searching(new ModelAuthor(id), "Author");
+					if (modelAuthor == null || id.equals("Tìm kiếm Author")) {
+						notExits(id, currentTable);
+					} else {
+						new ShowAuthor(modelAuthor);
+					}
+				} catch (Exception e) {
+					// TODO: handle exception
+					e.printStackTrace();
+				}
+				break;
+
+			case "Student":
+				try {
+					MainInterface mainInterface = (MainInterface) Naming.lookup("rmi://localhost:1026/test");
+					ModelStudent modelStudent = (ModelStudent) mainInterface.searching(new ModelStudent(id), "Student");
+					if (modelStudent == null) {
+						notExits(id, currentTable);
+					} else {
+						new ShowStudent(modelStudent);
+					}
+				} catch (Exception e) {
+					// TODO: handle exception
+					e.printStackTrace();
+				}
+				break;
+
+			case "Book":
+				try {
+					MainInterface mainInterface = (MainInterface) Naming.lookup("rmi://localhost:1026/test");
+					ModelBook modelBook = (ModelBook) mainInterface.searching(new ModelBook(id), "Book");
+					if (modelBook == null) {
+						notExits(id, currentTable);
+					} else {
+						new ShowBook(modelBook);
+					}
+				} catch (Exception e) {
+					// TODO: handle exception
+					e.printStackTrace();
+				}
+				break;
+
+			case "Borrow":
+				try {
+					MainInterface mainInterface = (MainInterface) Naming.lookup("rmi://localhost:1026/test");
+					ModelBorrowDetail modelBorrowDetail = (ModelBorrowDetail) mainInterface
+							.searching(new ModelBorrowDetail(id), "Borrow");
+					if (modelBorrowDetail == null) {
+						notExits(id, currentTable);
+					} else {
+						new ShowBorrowDetail(modelBorrowDetail);
+					}
+				} catch (Exception e) {
+					// TODO: handle exception
+					e.printStackTrace();
+				}
+				break;
+			}
+		}
+	}
+
+	public void notExits(String id, String currentTable) {
+		switch (currentTable) {
+		case "Author":
+			JOptionPane.showMessageDialog(this.clientMainFrame, "Không tồn tại tác giả có id là: " + id, "Lỗi!!",
+					JOptionPane.ERROR_MESSAGE);
+			break;
+		case "Student":
+			JOptionPane.showMessageDialog(this.clientMainFrame, "Không tồn tại sinh viên có id là: " + id, "Lỗi!!",
+					JOptionPane.ERROR_MESSAGE);
+			break;
+		case "Book":
+			JOptionPane.showMessageDialog(this.clientMainFrame, "Không tồn tại sách có id là: " + id, "Lỗi!!",
+					JOptionPane.ERROR_MESSAGE);
+			break;
+		case "Borrow":
+			JOptionPane.showMessageDialog(this.clientMainFrame, "Không tồn tại chi tiết mượn có id là: " + id, "Lỗi!!",
+					JOptionPane.ERROR_MESSAGE);
+			break;
+		}
+	}
+
+	public void ConstraintReporting() {
+		JOptionPane.showMessageDialog(this.clientMainFrame, "Không thể xóa do ràng buộc!", "Lỗi!!!",
+				JOptionPane.ERROR_MESSAGE);
+	}
+
+	public void BackupData() {
+		MyClass.BackupData.BackupData(this.clientMainFrame);
+	}
+
+}

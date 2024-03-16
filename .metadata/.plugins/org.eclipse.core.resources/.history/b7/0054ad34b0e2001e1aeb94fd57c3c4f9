@@ -1,0 +1,19 @@
+package Interface;
+
+import java.rmi.Remote;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+
+import Model.ModelStudent;
+
+public interface StudentInterface extends Remote {
+	public int addStudent(ModelStudent modelStudent) throws RemoteException;
+
+	public int removeStudent(ModelStudent modelStudent) throws RemoteException;
+
+	public int updateStudent(ModelStudent modelStudent) throws RemoteException;
+
+	public ModelStudent searchingStudent(ModelStudent modelStudent) throws RemoteException;
+
+	public ArrayList<ModelStudent> printListStudent() throws RemoteException;
+}

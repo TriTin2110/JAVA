@@ -1,0 +1,136 @@
+package Implements;
+
+import java.rmi.RemoteException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+
+import Model.ModelAuthor;
+
+public class BorrowImpl {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public AuthorImp() throws RemoteException {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public int addAuthor(ModelAuthor modelAuthor) throws RemoteException {
+		// Để thêm tác giả cần phải có những điều kiện sau:
+		/*
+		 * 1. Id và phone của tác giả không được trùng với những id khác
+		 *
+		 */
+
+		int result = 0;
+		Connection connection = ConnectionMuonTraSach.getConnection();
+		try {
+			String sql = "insert into author values(?, ?, ?, ?, ?)";
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setString(1, modelAuthor.getId());
+			preparedStatement.setString(2, modelAuthor.getName());
+			preparedStatement.setString(3, modelAuthor.getCountry());
+			preparedStatement.setInt(4, modelAuthor.getAge());
+			preparedStatement.setString(5, modelAuthor.getPhone());
+			result = preparedStatement.executeUpdate();
+			ConnectionMuonTraSach.closeConnection(connection);
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	@Override
+	public int removeAuthor(ModelAuthor modelAuthor) throws RemoteException {
+		// TODO Auto-generated method stub
+		int result = 0;
+		try {
+			Connection connection = ConnectionMuonTraSach.getConnection();
+			String sql = "delete from author where id_author = ?";
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setString(1, modelAuthor.getId());
+			result = preparedStatement.executeUpdate();
+			ConnectionMuonTraSach.closeConnection(connection);
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	@Override
+	public int updateAuthor(ModelAuthor modelAuthor) throws RemoteException {
+		// TODO Auto-generated method stub
+		int result = 0;
+		try {
+			if (searchingAuthor(modelAuthor) != null) {
+				Connection connection = ConnectionMuonTraSach.getConnection();
+				String sql = "update author set name_author =?, country = ?, age = ?, phone = ? where id_author = ?";
+				PreparedStatement preparedStatement = connection.prepareStatement(sql);
+				preparedStatement.setString(1, modelAuthor.getName());
+				preparedStatement.setString(2, modelAuthor.getCountry());
+				preparedStatement.setInt(3, modelAuthor.getAge());
+				preparedStatement.setString(4, modelAuthor.getPhone());
+				preparedStatement.setString(5, modelAuthor.getId());
+				result = preparedStatement.executeUpdate();
+				ConnectionMuonTraSach.closeConnection(connection);
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	@Override
+	public ModelAuthor searchingAuthor(ModelAuthor modelAuthor) throws RemoteException {
+		// TODO Auto-generated method stub
+		ModelAuthor modelAuthorResult = null;
+		try {
+			Connection connection = ConnectionMuonTraSach.getConnection();
+			String sql = "select * from author where id_author = ?";
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setString(1, modelAuthor.getId());
+			ResultSet resultSet = preparedStatement.executeQuery();
+			while (resultSet.next()) {
+				modelAuthorResult = new ModelAuthor(resultSet.getString("id_author"),
+						resultSet.getString("name_author"), resultSet.getInt("age"), resultSet.getString("phone"),
+						resultSet.getString("country"));
+				break;
+			}
+			ConnectionMuonTraSach.closeConnection(connection);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return modelAuthorResult;
+	}
+
+	@Override
+	public ArrayList<ModelAuthor> printListAuthor() throws RemoteException {
+		// TODO Auto-generated method stub
+		ArrayList<ModelAuthor> list = new ArrayList<ModelAuthor>();
+		try {
+			Connection connection = ConnectionMuonTraSach.getConnection();
+			String sql = "select * from author";
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			ResultSet resultSet = preparedStatement.executeQuery();
+			while (resultSet.next()) {
+				ModelAuthor modelAuthor = new ModelAuthor(resultSet.getString("id_author"),
+						resultSet.getString("name_author"), resultSet.getInt("age"), resultSet.getString("phone"),
+						resultSet.getString("country"));
+				list.add(modelAuthor);
+			}
+			ConnectionMuonTraSach.closeConnection(connection);
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		return list;
+	}
+}

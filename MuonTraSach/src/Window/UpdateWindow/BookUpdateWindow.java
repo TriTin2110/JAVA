@@ -1,0 +1,206 @@
+package Window.UpdateWindow;
+
+import java.awt.BorderLayout;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.rmi.Naming;
+import java.util.Properties;
+
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
+
+import org.jdatepicker.impl.JDatePanelImpl;
+import org.jdatepicker.impl.JDatePickerImpl;
+import org.jdatepicker.impl.UtilDateModel;
+
+import Interface.MainInterface;
+import Model.ModelBook;
+import MyClass.CheckingUserInputIssues;
+import MyClass.DateFormatter;
+import MyClass.GetAttribute;
+import MyClass.NumberController;
+import MyClass.StringController;
+
+public class BookUpdateWindow extends JFrame {
+	private static final long serialVersionUID = 1L;
+	private JPanel contentPane;
+	private JTextField textFieldBookName;
+	private JTextField textFieldQuantity;
+	private JDatePickerImpl jDatePickerImpl;
+	private JComboBox<String> comboBoxAuthorID;
+	private JComboBox<String> comboBoxKindOfBook;
+	private UtilDateModel utilDateModel;
+
+	/**
+	 * Launch the application.
+	 */
+
+	/**
+	 * Create the frame.
+	 */
+	public BookUpdateWindow(ModelBook modelBook, String id) {
+
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 549, 310);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+
+		setContentPane(contentPane);
+		contentPane.setLayout(new BorderLayout(0, 0));
+
+		JPanel mainPanel = new JPanel();
+		contentPane.add(mainPanel, BorderLayout.CENTER);
+		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+
+		JPanel panelBookName = new JPanel();
+		mainPanel.add(panelBookName);
+		panelBookName.setLayout(new GridLayout(0, 2, 0, 0));
+
+		JLabel lblBookName = new JLabel("Tên sách:");
+		lblBookName.setFont(new Font("Tahoma", Font.PLAIN, 19));
+		panelBookName.add(lblBookName);
+
+		textFieldBookName = new JTextField();
+		textFieldBookName.setFont(new Font("Tahoma", Font.PLAIN, 19));
+		textFieldBookName.setColumns(10);
+		panelBookName.add(textFieldBookName);
+
+		JPanel panelKindOfBook = new JPanel();
+		mainPanel.add(panelKindOfBook);
+		panelKindOfBook.setLayout(new GridLayout(0, 2, 0, 0));
+
+		JLabel lblKindOfBook = new JLabel("Thể loại:");
+		lblKindOfBook.setFont(new Font("Tahoma", Font.PLAIN, 19));
+		panelKindOfBook.add(lblKindOfBook);
+
+		String[] country = { "Sách thiếu nhi", "Sách tâm lý, tình cảm", "Sách tôn giáo",
+				"Sách văn hoá xã hội", "Sách lịch sử", "Sách văn học viễn tưởng",
+				"Sách tiểu sử, tự truyện" };
+		comboBoxKindOfBook = new JComboBox<String>(country);
+		comboBoxKindOfBook.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		panelKindOfBook.add(comboBoxKindOfBook);
+
+		JPanel panelAuthorID = new JPanel();
+		mainPanel.add(panelAuthorID);
+		panelAuthorID.setLayout(new GridLayout(0, 2, 0, 0));
+
+		JLabel lblAuthorID = new JLabel("Mã tác giả:");
+		lblAuthorID.setFont(new Font("Tahoma", Font.PLAIN, 19));
+		panelAuthorID.add(lblAuthorID);
+
+		comboBoxAuthorID = new JComboBox<String>(StringController.StringArraySort(GetAttribute.getId("Author")));
+		comboBoxAuthorID.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		panelAuthorID.add(comboBoxAuthorID);
+
+		JPanel panelQuantity = new JPanel();
+		mainPanel.add(panelQuantity);
+		panelQuantity.setLayout(new GridLayout(0, 2, 0, 0));
+
+		JLabel lblQuantity = new JLabel("Số lượng:");
+		lblQuantity.setFont(new Font("Tahoma", Font.PLAIN, 19));
+		panelQuantity.add(lblQuantity);
+
+		textFieldQuantity = new JTextField();
+		textFieldQuantity.setFont(new Font("Tahoma", Font.PLAIN, 19));
+		textFieldQuantity.setColumns(10);
+		panelQuantity.add(textFieldQuantity);
+
+		JPanel panelPublicDay = new JPanel();
+		mainPanel.add(panelPublicDay);
+		panelPublicDay.setLayout(new GridLayout(0, 2, 0, 0));
+
+		JLabel lblPublicDay = new JLabel("Ngày xuất bản:");
+		lblPublicDay.setFont(new Font("Tahoma", Font.PLAIN, 19));
+		panelPublicDay.add(lblPublicDay);
+
+		utilDateModel = new UtilDateModel();
+		Properties properties = new Properties();
+		properties.put("text.today", "today");
+		properties.put("text.month", "month");
+		properties.put("text.year", "year");
+		JDatePanelImpl jDatePanelImpl = new JDatePanelImpl(utilDateModel, properties);
+		jDatePickerImpl = new JDatePickerImpl(jDatePanelImpl, new DateFormatter());
+		panelPublicDay.add(jDatePickerImpl);
+
+		JPanel panelSubmit = new JPanel();
+		mainPanel.add(panelSubmit);
+		panelSubmit.setLayout(new BoxLayout(panelSubmit, BoxLayout.X_AXIS));
+
+		JButton btnAccept = new JButton("Xác nhận");
+		btnAccept.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		panelSubmit.add(btnAccept);
+
+		JButton btnCancel = new JButton("Hủy");
+		btnCancel.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		panelSubmit.add(btnCancel);
+		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		this.setLocationRelativeTo(null);
+		this.setVisible(true);
+		setTextField(id);
+		btnAccept.addActionListener(e -> {
+			try {
+				MainInterface mainInterface = (MainInterface) Naming.lookup("rmi://localhost:1026/test");
+				Object dateInput = this.jDatePickerImpl.getModel().getValue();
+				if (dateInput == null) {
+					JOptionPane.showMessageDialog(this, "Xin vui lòng điền đầy đủ thông tin!", "Lỗi!!",
+							JOptionPane.ERROR_MESSAGE);
+				} else {
+					String[] textField = { this.textFieldBookName.getText(),
+							comboBoxKindOfBook.getSelectedItem().toString(),
+							comboBoxAuthorID.getSelectedItem().toString(), this.textFieldQuantity.getText(),
+							dateInput.toString() };
+					if (!CheckingUserInputIssues.checkingLackInformation(textField)) {
+						JOptionPane.showMessageDialog(this, "Xin vui lòng điền đầy đủ thông tin!", "Lỗi!!",
+								JOptionPane.ERROR_MESSAGE);
+					} else {
+						int result = (NumberController.checkCharacterIntNumber(textField[3]) == 0) ? 0 : 1;
+						if (result == 0) {
+							JOptionPane.showMessageDialog(this,
+									"Số lượng chỉ được chứa ký tự số và không âm. Xin vui lòng kiểm tra lại!", "Lỗi!!",
+									JOptionPane.ERROR_MESSAGE);
+						} else {
+							String status = (Integer.parseInt(textField[3]) > 0) ? "Còn sách" : "Hết sách";
+							ModelBook modelBookResult = new ModelBook(id, textField[0], textField[1], textField[2],
+									status, Integer.parseInt(textField[3]), GetAttribute.getDate(jDatePickerImpl));
+
+							result = mainInterface.update(modelBookResult, "Book");
+							JOptionPane.showMessageDialog(this, "Đã cập nhật thành công " + result + " dòng!");
+							this.dispose();
+						}
+					}
+				}
+
+			} catch (Exception e2) {
+				// TODO: handle exception
+				e2.printStackTrace();
+			}
+		});
+
+		btnCancel.addActionListener(e -> {
+			this.dispose();
+		});
+	}
+
+	private void setTextField(String id) {
+		try {
+			MainInterface mainInterface = (MainInterface) Naming.lookup("rmi://localhost:1026/test");
+			ModelBook modelBook = (ModelBook) mainInterface.searching(new ModelBook(id), "Book");
+			this.textFieldQuantity.setText(modelBook.getQuantity() + "");
+			this.textFieldBookName.setText(modelBook.getNameBook());
+			this.comboBoxAuthorID.setSelectedItem(modelBook.getAuthorID());
+			this.comboBoxKindOfBook.setSelectedItem(modelBook.getKindOfBook());
+			this.utilDateModel.setValue(modelBook.getPublicDay());
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+
+	}
+}

@@ -1,0 +1,65 @@
+package Implements;
+
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.util.ArrayList;
+
+import Interface.BorrowInterface;
+import Model.ModelBorrowDetail;
+
+public class BorrowImpl extends UnicastRemoteObject implements BorrowInterface {
+
+	protected BorrowImpl() throws RemoteException {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public int addBorrow(ModelBorrowDetail modelBorrowDetail) throws RemoteException {
+		// TODO Auto-generated method stub
+		int result = 0;
+		Connection connection = ConnectionMuonTraSach.getConnection();
+		try {
+			String sql = "insert into BorrowDetail values(?, ?, ?, ?, ?, ?, ?)";
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setString(1, modelBorrowDetail.getId());
+			preparedStatement.setString(2, modelBorrowDetail.getName());
+			preparedStatement.setString(3, modelAuthor.getCountry());
+			preparedStatement.setInt(4, modelAuthor.getAge());
+			preparedStatement.setString(5, modelAuthor.getPhone());
+			result = preparedStatement.executeUpdate();
+			ConnectionMuonTraSach.closeConnection(connection);
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	@Override
+	public int removeBorrow(ModelBorrowDetail modelBorrowDetail) throws RemoteException {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int updateBorrow(ModelBorrowDetail modelBorrowDetail) throws RemoteException {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public ModelBorrowDetail searchingBorrow(ModelBorrowDetail modelBorrowDetail) throws RemoteException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ArrayList<ModelBorrowDetail> printListBorrow() throws RemoteException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

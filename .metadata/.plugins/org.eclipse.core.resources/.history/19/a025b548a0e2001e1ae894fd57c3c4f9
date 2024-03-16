@@ -1,0 +1,80 @@
+package main;
+
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.rmi.Naming;
+import java.rmi.registry.LocateRegistry;
+
+import Controller.MainController;
+import Implements.MainImp;
+import Interface.MainInterface;
+
+public class Server implements ItemListener {
+
+	private ClientMainFrame clientMainFrame;
+
+	public Server(ClientMainFrame clientMainFrame) {
+		this.clientMainFrame = clientMainFrame;
+	}
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		try {
+
+			LocateRegistry.createRegistry(1026);
+			System.out.println("Server đang chạy");
+			while (true) {
+
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void itemStateChanged(ItemEvent e) {
+		// TODO Auto-generated method stub
+		MainController mainController = new MainController();
+		if (e.getStateChange() == ItemEvent.SELECTED) {
+			switch (e.getItem().toString()) {
+			case "Tác giả":
+				this.clientMainFrame.tableChosen = "Author";
+				break;
+
+			case "Sinh viên":
+				this.clientMainFrame.tableChosen = "Student";
+				break;
+
+			case "Sách":
+				this.clientMainFrame.tableChosen = "Book";
+				break;
+
+			case "Chi tiết mượn":
+				this.clientMainFrame.tableChosen = "Borrow";
+				break;
+
+			}
+			createConnect();
+			// Đi đến tạo bảng
+			mainController.controllerPeform(this.clientMainFrame, this.clientMainFrame.tableChosen);
+			Object object = this.clientMainFrame.comboBoxSearching.getSelectedItem();
+			if (object != null) {
+				mainController.searchingRecord(this.clientMainFrame, this.clientMainFrame.tableChosen,
+						object.toString());
+			}
+		}
+	}
+
+	public void createConnect() {
+		try {
+			MainInterface mainInterface = new MainImp();
+			Naming.rebind("rmi://localhost:1026/test", mainInterface);
+			System.out.println("Đã tạo kết nối đến bảng " + this.clientMainFrame.tableChosen);
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+	}
+
+}

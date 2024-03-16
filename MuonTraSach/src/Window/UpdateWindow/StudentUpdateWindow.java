@@ -1,0 +1,174 @@
+package Window.UpdateWindow;
+
+import java.awt.BorderLayout;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.rmi.Naming;
+
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
+
+import Interface.MainInterface;
+import Model.ModelStudent;
+import MyClass.CheckingUserInputIssues;
+import MyClass.NumberController;
+
+public class StudentUpdateWindow extends JFrame {
+
+	private static final long serialVersionUID = 1L;
+	private JPanel contentPane;
+	private JTextField textFieldStudentName;
+	private JTextField textFieldAge;
+	private JTextField textFieldPhone;
+	private JComboBox<String> comboBoxSpecialized;
+
+	/**
+	 * Launch the application.
+	 */
+
+	/**
+	 * Create the frame.
+	 */
+	public StudentUpdateWindow(ModelStudent modelStudent) {
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 549, 310);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+
+		setContentPane(contentPane);
+		contentPane.setLayout(new BorderLayout(0, 0));
+
+		JPanel mainPanel = new JPanel();
+		contentPane.add(mainPanel, BorderLayout.CENTER);
+		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+
+		JPanel panelAuthorName = new JPanel();
+		mainPanel.add(panelAuthorName);
+		panelAuthorName.setLayout(new GridLayout(0, 2, 0, 0));
+
+		JLabel lblStudentName = new JLabel("Tên sinh viên:");
+		lblStudentName.setFont(new Font("Tahoma", Font.PLAIN, 19));
+		panelAuthorName.add(lblStudentName);
+
+		textFieldStudentName = new JTextField();
+		textFieldStudentName.setFont(new Font("Tahoma", Font.PLAIN, 19));
+		textFieldStudentName.setColumns(10);
+		panelAuthorName.add(textFieldStudentName);
+
+		JPanel panelAuthorCountry = new JPanel();
+		mainPanel.add(panelAuthorCountry);
+		panelAuthorCountry.setLayout(new GridLayout(0, 2, 0, 0));
+
+		JLabel lblStudentCountry = new JLabel("Ngành học:");
+		lblStudentCountry.setFont(new Font("Tahoma", Font.PLAIN, 19));
+		panelAuthorCountry.add(lblStudentCountry);
+
+		String[] country = { "CNTT", "Công nghệ Ô Tô", "Cơ Khí", "Điện", "Marketing", "Logistic", "Y Học" };
+		comboBoxSpecialized = new JComboBox<String>(country);
+		comboBoxSpecialized.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		panelAuthorCountry.add(comboBoxSpecialized);
+		JPanel panelAuthorAge = new JPanel();
+		mainPanel.add(panelAuthorAge);
+		panelAuthorAge.setLayout(new GridLayout(0, 2, 0, 0));
+
+		JLabel lblAge = new JLabel("Tuổi:");
+		lblAge.setFont(new Font("Tahoma", Font.PLAIN, 19));
+		panelAuthorAge.add(lblAge);
+
+		textFieldAge = new JTextField();
+		textFieldAge.setFont(new Font("Tahoma", Font.PLAIN, 19));
+		textFieldAge.setColumns(10);
+		panelAuthorAge.add(textFieldAge);
+
+		JPanel panelAuthorPhone = new JPanel();
+		mainPanel.add(panelAuthorPhone);
+		panelAuthorPhone.setLayout(new GridLayout(0, 2, 0, 0));
+
+		JLabel lblPhone = new JLabel("Số điện thoại:");
+		lblPhone.setFont(new Font("Tahoma", Font.PLAIN, 19));
+		panelAuthorPhone.add(lblPhone);
+
+		textFieldPhone = new JTextField();
+		textFieldPhone.setFont(new Font("Tahoma", Font.PLAIN, 19));
+		textFieldPhone.setColumns(10);
+		panelAuthorPhone.add(textFieldPhone);
+
+		JPanel panelSubmit = new JPanel();
+		mainPanel.add(panelSubmit);
+		panelSubmit.setLayout(new BoxLayout(panelSubmit, BoxLayout.X_AXIS));
+
+		JButton btnAccept = new JButton("Xác nhận");
+		btnAccept.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		panelSubmit.add(btnAccept);
+
+		JButton btnCancel = new JButton("Hủy");
+		btnCancel.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		panelSubmit.add(btnCancel);
+		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		this.setLocationRelativeTo(null);
+		this.setVisible(true);
+		setTextField(modelStudent.getId());
+		btnAccept.addActionListener(e -> {
+			try {
+				MainInterface mainInterface = (MainInterface) Naming.lookup("rmi://localhost:1026/test");
+				String[] textField = { modelStudent.getId(), this.textFieldStudentName.getText(),
+						this.textFieldAge.getText(), this.textFieldPhone.getText(),
+						comboBoxSpecialized.getSelectedItem().toString() };
+				int result = (NumberController.checkCharacterIntNumber(textField[2]) == 0
+						|| NumberController.checkCharacterIntNumber(textField[3]) == 0) ? 0 : 1;
+				if (result == 0) {
+					JOptionPane.showMessageDialog(this,
+							"Tuổi và SĐT chỉ được chứa ký tự số. Xin vui lòng kiểm tra lại!");
+
+				} else {
+					if (!CheckingUserInputIssues.checkingLackInformation(textField)) {
+						JOptionPane.showMessageDialog(this, "Xin vui lòng điền đầy đủ thông tin!");
+					} else {
+						// Kiểm tra những trường dữ liệu số có hợp lệ hay không
+
+						if (!CheckingUserInputIssues.checkingPhoneAndAge(textField[2], textField[3])) {
+							JOptionPane.showMessageDialog(this, "SĐT hoặc tuổi không hợp lệ!");
+						} else {
+							ModelStudent model = new ModelStudent(textField[0], textField[1],
+									Integer.parseInt(textField[2]), textField[3], textField[4]);
+
+							result = mainInterface.update(model, "Student");
+							JOptionPane.showMessageDialog(this, "Đã cập nhật thành công " + result + " dòng!");
+							this.dispose();
+						}
+					}
+				}
+
+			} catch (Exception e2) {
+				// TODO: handle exception
+				e2.printStackTrace();
+			}
+		});
+
+		btnCancel.addActionListener(e -> {
+			this.dispose();
+		});
+	}
+
+	private void setTextField(String id) {
+		try {
+			MainInterface mainInterface = (MainInterface) Naming.lookup("rmi://localhost:1026/test");
+			ModelStudent modelStudent = (ModelStudent) mainInterface.searching(new ModelStudent(id), "Student");
+			this.textFieldAge.setText(modelStudent.getAge() + "");
+			this.textFieldStudentName.setText(modelStudent.getName());
+			this.textFieldPhone.setText(modelStudent.getPhone());
+			this.comboBoxSpecialized.setSelectedItem(modelStudent.getSpecialized());
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+
+	}
+}

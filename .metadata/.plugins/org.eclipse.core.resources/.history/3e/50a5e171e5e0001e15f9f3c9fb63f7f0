@@ -1,0 +1,140 @@
+package Implements;
+
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+
+import Interface.BorrowInterface;
+import Model.ModelAuthor;
+import Model.ModelBorrowDetail;
+
+public class BorrowImpl extends UnicastRemoteObject implements BorrowInterface {
+
+	protected BorrowImpl() throws RemoteException {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public int addBorrow(ModelBorrowDetail modelBorrowDetail) throws RemoteException {
+		// TODO Auto-generated method stub
+		int result = 0;
+		Connection connection = ConnectionMuonTraSach.getConnection();
+		try {
+			String sql = "insert into BorrowDetail values(?, ?, ?, ?, ?, ?, ?)";
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setString(1, modelBorrowDetail.getBorrowID());
+			preparedStatement.setString(2, modelBorrowDetail.getBookID());
+			preparedStatement.setString(3, modelBorrowDetail.getStudentID());
+			preparedStatement.setString(4, modelBorrowDetail.getExpiredStatus());
+			preparedStatement.setString(5, modelBorrowDetail.getReturnStatus());
+			preparedStatement.setDate(6, modelBorrowDetail.getBorrowDay());
+			preparedStatement.setDate(7, modelBorrowDetail.getReturnDay());
+			result = preparedStatement.executeUpdate();
+			ConnectionMuonTraSach.closeConnection(connection);
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	@Override
+	public int removeBorrow(ModelBorrowDetail modelBorrowDetail) throws RemoteException {
+		// TODO Auto-generated method stub
+		int result = 0;
+		try {
+			Connection connection = ConnectionMuonTraSach.getConnection();
+			String sql = "delete from BorrowDetail where id_borrow = ?";
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setString(1, modelBorrowDetail.getBorrowID());
+			result = preparedStatement.executeUpdate();
+			ConnectionMuonTraSach.closeConnection(connection);
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	@Override
+	public int updateBorrow(ModelBorrowDetail modelBorrowDetail) throws RemoteException {
+		// TODO Auto-generated method stub
+		int result = 0;
+		try {
+			if (searchingBorrow(modelBorrowDetail) != null) {
+				Connection connection = ConnectionMuonTraSach.getConnection();
+				String sql = "update author set id_book =?, id_student = ?, experied_status = ?, return_status = ?, borrow_day = ?, return_day = ? where id_borrow = ?";
+				PreparedStatement preparedStatement = connection.prepareStatement(sql);
+				preparedStatement.setString(1, modelBorrowDetail.getBookID());
+				preparedStatement.setString(2, modelBorrowDetail.getStudentID());
+				preparedStatement.setString(3, modelBorrowDetail.getExpiredStatus());
+				preparedStatement.setString(4, modelBorrowDetail.getReturnStatus());
+				preparedStatement.setDate(5, modelBorrowDetail.getBorrowDay());
+				preparedStatement.setDate(6, modelBorrowDetail.getReturnDay());
+				preparedStatement.setString(7, modelBorrowDetail.getBorrowID());
+				result = preparedStatement.executeUpdate();
+				ConnectionMuonTraSach.closeConnection(connection);
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	@Override
+	public ModelBorrowDetail searchingBorrow(ModelBorrowDetail modelBorrowDetail) throws RemoteException {
+		// TODO Auto-generated method stub
+		ModelBorrowDetail modelBorrowDetailResult = null;
+		try {
+			Connection connection = ConnectionMuonTraSach.getConnection();
+			String sql = "select * from BorrowDetail where id_borrow = ?";
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setString(1, modelBorrowDetail.getBorrowID());
+			ResultSet resultSet = preparedStatement.executeQuery();
+			while (resultSet.next()) {
+				modelBorrowDetailResult = new ModelBorrowDetail(
+						resultSet.getString("id_borrow"),
+						resultSet.getString("id_book"), 
+						resultSet.getString("id_student"),
+						resultSet.getString("expired_status"), 
+						resultSet.getString("return_status"),
+						resultSet.getDate("borrow_day"), 
+						resultSet.getDate("return_day"));
+				break;
+			}
+			ConnectionMuonTraSach.closeConnection(connection);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return modelBorrowDetailResult;
+	}
+
+	@Override
+	public ArrayList<ModelBorrowDetail> printListBorrow() throws RemoteException {
+		// TODO Auto-generated method stub
+		ArrayList<ModelBorrowDetail> list = new ArrayList<ModelBorrowDetail>();
+		try {
+			Connection connection = ConnectionMuonTraSach.getConnection();
+			String sql = "select * from BorrowDetail";
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			ResultSet resultSet = preparedStatement.executeQuery();
+			while (resultSet.next()) {
+				ModelBorrowDetail modelBorrowDetail = new ModelAuthor(resultSet.getString("id_author"),
+						resultSet.getString("name_author"), resultSet.getInt("age"), resultSet.getString("phone"),
+						resultSet.getString("country"));
+				list.add(modelBorrowDetail);
+			}
+			ConnectionMuonTraSach.closeConnection(connection);
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		return list;
+	}
+
+}

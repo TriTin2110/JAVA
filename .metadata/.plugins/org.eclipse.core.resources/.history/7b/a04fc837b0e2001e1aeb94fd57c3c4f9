@@ -1,0 +1,141 @@
+package Implements;
+
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+
+import Interface.BookInterface;
+import Model.ModelBook;
+
+public class BookImp extends UnicastRemoteObject implements BookInterface {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public BookImp() throws RemoteException {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public int addBook(ModelBook modelBook) throws RemoteException {
+		// TODO Auto-generated method stub
+		int result = 0;
+		try {
+			Connection connection = ConnectionMuonTraSach.getConnection();
+			String sql = "insert into book values(?, ?, ?, ?, ?, ?, ?)";
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setString(1, modelBook.getIdBook());
+			preparedStatement.setString(2, modelBook.getNameBook());
+			preparedStatement.setString(3, modelBook.getKindOfBook());
+			preparedStatement.setString(4, modelBook.getAuthorID());
+			preparedStatement.setString(5, modelBook.getStatus());
+			preparedStatement.setInt(6, modelBook.getQuantity());
+			preparedStatement.setDate(7, modelBook.getPublicDay());
+			result = preparedStatement.executeUpdate();
+			ConnectionMuonTraSach.closeConnection(connection);
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	@Override
+	public int removeBook(ModelBook modelBook) throws RemoteException {
+		// TODO Auto-generated method stub
+		int result = 0;
+		try {
+			Connection connection = ConnectionMuonTraSach.getConnection();
+			String sql = "delete from book where id_book = ?";
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setString(1, modelBook.getIdBook());
+			result = preparedStatement.executeUpdate();
+			ConnectionMuonTraSach.closeConnection(connection);
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	@Override
+	public int updateBook(ModelBook modelBook) throws RemoteException {
+		// TODO Auto-generated method stub
+		int result = 0;
+		try {
+			if (searchingBook(modelBook) != null) {
+				Connection connection = ConnectionMuonTraSach.getConnection();
+				String sql = "update book set name_book = ?, kind_of_book = ?, id_author = ?, book_status = ?, quantity = ?, public_day = ? where id_book = ?";
+				PreparedStatement preparedStatement = connection.prepareStatement(sql);
+				preparedStatement.setString(1, modelBook.getNameBook());
+				preparedStatement.setString(2, modelBook.getKindOfBook());
+				preparedStatement.setString(3, modelBook.getAuthorID());
+				preparedStatement.setString(4, modelBook.getStatus());
+				preparedStatement.setInt(5, modelBook.getQuantity());
+				preparedStatement.setDate(6, modelBook.getPublicDay());
+				preparedStatement.setString(7, modelBook.getIdBook());
+				result = preparedStatement.executeUpdate();
+				ConnectionMuonTraSach.closeConnection(connection);
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	@Override
+	public ModelBook searchingBook(ModelBook modelBook) throws RemoteException {
+		// TODO Auto-generated method stub
+		ModelBook modelBookResult = null;
+		try {
+			Connection connection = ConnectionMuonTraSach.getConnection();
+			String sql = "select * from book where id_book = ?";
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setString(1, modelBook.getIdBook());
+			ResultSet resultSet = preparedStatement.executeQuery();
+			while (resultSet.next()) {
+				modelBookResult = new ModelBook(resultSet.getString("id_book"), resultSet.getString("name_book"),
+						resultSet.getString("kind_of_book"), resultSet.getString("id_author"),
+						resultSet.getString("book_status"), resultSet.getInt("quantity"),
+						resultSet.getDate("public_day"));
+				break;
+			}
+			ConnectionMuonTraSach.closeConnection(connection);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return modelBookResult;
+	}
+
+	@Override
+	public ArrayList<ModelBook> printListBook() throws RemoteException {
+		// TODO Auto-generated method stub
+		ArrayList<ModelBook> list = new ArrayList<ModelBook>();
+		try {
+			Connection connection = ConnectionMuonTraSach.getConnection();
+			String sql = "select * from book";
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			ResultSet resultSet = preparedStatement.executeQuery();
+			while (resultSet.next()) {
+				ModelBook modelBook = new ModelBook(resultSet.getString("id_book"), resultSet.getString("name_book"),
+						resultSet.getString("kind_of_book"), resultSet.getString("id_author"),
+						resultSet.getString("book_status"), resultSet.getInt("quantity"),
+						resultSet.getDate("public_day"));
+				list.add(modelBook);
+			}
+			ConnectionMuonTraSach.closeConnection(connection);
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		return list;
+	}
+
+}

@@ -1,0 +1,231 @@
+package Window.AddWindow;
+
+import java.awt.BorderLayout;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.rmi.Naming;
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Properties;
+
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
+
+import org.jdatepicker.impl.JDatePanelImpl;
+import org.jdatepicker.impl.JDatePickerImpl;
+import org.jdatepicker.impl.UtilDateModel;
+
+import Implements.ConnectionMuonTraSach;
+import Interface.BorrowInterface;
+import Model.ModelBorrowDetail;
+import MyClass.CheckingUserInputIssues;
+import MyClass.DateFormatter;
+import MyClass.GetAttribute;
+import MyClass.StringController;
+import main.ClientMainFrame;
+
+public class AddBorrowWindow extends JFrame {
+
+	private static final long serialVersionUID = 1L;
+	private JPanel contentPane;
+	private JDatePickerImpl jDatePickerImpl;
+	private JTextField textFieldBorrowId;
+
+	/**
+	 * Launch the application.
+	 */
+	/**
+	 * Create the frame.
+	 */
+	public AddBorrowWindow(ClientMainFrame clientMainFrame) {
+		this.setTitle("Thêm sách mới!");
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 549, 310);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+
+		setContentPane(contentPane);
+		contentPane.setLayout(new BorderLayout(0, 0));
+
+		JPanel mainPanel = new JPanel();
+		contentPane.add(mainPanel, BorderLayout.CENTER);
+		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+
+		JPanel panelBorrowId = new JPanel();
+		mainPanel.add(panelBorrowId);
+		panelBorrowId.setLayout(new GridLayout(0, 2, 0, 0));
+
+		JLabel lblBorrowId = new JLabel("Id mượn:");
+		lblBorrowId.setFont(new Font("Tahoma", Font.PLAIN, 19));
+		panelBorrowId.add(lblBorrowId);
+
+		textFieldBorrowId = new JTextField();
+		textFieldBorrowId.setFont(new Font("Tahoma", Font.PLAIN, 19));
+		textFieldBorrowId.setColumns(10);
+		panelBorrowId.add(textFieldBorrowId);
+
+		JPanel panelBookID = new JPanel();
+		mainPanel.add(panelBookID);
+		panelBookID.setLayout(new GridLayout(0, 2, 0, 0));
+
+		JLabel lblBookId = new JLabel("Id sách:");
+		lblBookId.setFont(new Font("Tahoma", Font.PLAIN, 19));
+		panelBookID.add(lblBookId);
+
+		String[] listBookId = new String[GetAttribute.getBookCount()];
+		ArrayList<String> listBookCount = GetAttribute.getBookId();
+		int count = 0;
+		for (String bookId : listBookCount) {
+			listBookId[count] = bookId;
+			count++;
+		}
+		JComboBox<String> comboBoxBookId = new JComboBox<String>(listBookId);
+		panelBookID.add(comboBoxBookId);
+
+		JPanel panelStudentId = new JPanel();
+		mainPanel.add(panelStudentId);
+		panelStudentId.setLayout(new GridLayout(0, 2, 0, 0));
+
+		JLabel lblStudentId = new JLabel("Id sinh viên:");
+		lblStudentId.setFont(new Font("Tahoma", Font.PLAIN, 19));
+		panelStudentId.add(lblStudentId);
+
+		count = 0;
+		String[] listStudent = new String[GetAttribute.getStudentCount()];
+		ArrayList<String> listStudentId = GetAttribute.getStudentId();
+		for (String studentId : listStudentId) {
+			listStudent[count] = studentId;
+			count++;
+		}
+		JComboBox<String> comboBoxStudentId = new JComboBox<String>(listStudentId);
+		panelStudentId.add(comboBoxStudentId);
+
+		JPanel panelBorrowDay = new JPanel();
+		mainPanel.add(panelBorrowDay);
+		panelBorrowDay.setLayout(new GridLayout(0, 2, 0, 0));
+
+		JLabel lblBorrowDay = new JLabel("Ngày mượn:");
+		lblBorrowDay.setFont(new Font("Tahoma", Font.PLAIN, 19));
+		panelBorrowDay.add(lblBorrowDay);
+
+		UtilDateModel uCalendarModel = new UtilDateModel();
+		Properties properties = new Properties();
+		properties.put("text.today", "today");
+		properties.put("text.month", "month");
+		properties.put("text.year", "year");
+		JDatePanelImpl jDatePanelImpl = new JDatePanelImpl(uCalendarModel, properties);
+		jDatePickerImpl = new JDatePickerImpl(jDatePanelImpl, new DateFormatter());
+		panelBorrowDay.add(jDatePickerImpl);
+
+		// Lấy dữ liệu từ JDatePickerImpl
+//		jDatePickerImpl.getModel().getValue();
+
+		JPanel panelSubmit = new JPanel();
+		mainPanel.add(panelSubmit);
+		panelSubmit.setLayout(new BoxLayout(panelSubmit, BoxLayout.X_AXIS));
+
+		JButton btnAccept = new JButton("Xác nhận");
+		btnAccept.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		panelSubmit.add(btnAccept);
+
+		JButton btnCancel = new JButton("Hủy");
+		btnCancel.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		panelSubmit.add(btnCancel);
+		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		this.setLocationRelativeTo(null);
+		this.setVisible(true);
+
+		btnAccept.addActionListener(e -> {
+			try {
+				BorrowInterface borrowInterface = (BorrowInterface) Naming.lookup("rmi://localhost:1026/test");
+				Object object = this.jDatePickerImpl.getModel().getValue();
+				// Kiểm tra date đã được chọn hay chưa
+				if (object == null) {
+					JOptionPane.showMessageDialog(this, "Xin vui lòng điền đầy đủ thông tin!");
+				} else {
+					String[] textField = { this.textFieldBorrowId.getText(),
+							comboBoxBookId.getSelectedItem().toString(),
+							comboBoxStudentId.getSelectedItem().toString() };
+					// Kiểm tra thông tin có đầy đủ ko
+					if (!CheckingUserInputIssues.checkingLackInformation(textField)) {
+						JOptionPane.showMessageDialog(this, "Xin vui lòng điền đầy đủ thông tin!");
+					} else {
+						ModelBorrowDetail modelBorrowDetail = new ModelBorrowDetail(textField[0], textField[1],
+								textField[2], getDate());
+						if (borrowInterface.searchingBorrow(modelBorrowDetail) != null) {
+							JOptionPane.showMessageDialog(this, "Chi tiết mượn đã có id tồn tại trong danh sách",
+									"Lỗi!!", JOptionPane.ERROR_MESSAGE);
+						} else {
+							int result = borrowInterface.addBorrow(modelBorrowDetail);
+							JOptionPane.showMessageDialog(this, "Đã thêm thành công " + result + " dòng!");
+							System.out.println("Đã thêm chi tiết mượn mới thành công");
+							this.dispose();
+
+						}
+
+					}
+				}
+
+			} catch (Exception e2) {
+				// TODO: handle exception
+				e2.printStackTrace();
+			}
+		});
+
+		btnCancel.addActionListener(e ->
+
+		{
+			this.dispose();
+		});
+	}
+
+	// Lấy ngày tháng mà người dùng chọn
+	public Date getDate() {
+		int day = this.jDatePickerImpl.getModel().getDay();
+		int month = this.jDatePickerImpl.getModel().getMonth();
+		int year = this.jDatePickerImpl.getModel().getYear();
+		@SuppressWarnings("deprecation")
+		Date date = new Date(year - 1900, month, day);
+		return date;
+	}
+
+	public String[] getAuthorID() {
+		String[] result = null;
+		try {
+			Connection connection = ConnectionMuonTraSach.getConnection();
+			Statement statement = connection.createStatement();
+			// Lấy số dòng của bảng author
+			ResultSet resultSet = statement.executeQuery("select count(*) from author");
+			int count = (resultSet.next()) ? resultSet.getInt(1) : 0;
+			// Tạo mảng string với độ lớn = số dòng đã lấy
+			result = new String[count];
+
+			count = 0;
+
+			String sql = "select id_author from author";
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			resultSet = preparedStatement.executeQuery();
+			while (resultSet.next()) {
+				result[count] = resultSet.getString("id_author");
+				count++;
+			}
+
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		return StringController.StringArraySort(result);
+	}
+
+}
