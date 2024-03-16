@@ -1,0 +1,28 @@
+{
+        "java.debug.settings.onBuildFailureProceed": true,
+        "java.completion.filteredTypes": [
+                "com.sun.*",
+                "sun.*",
+                "jdk.*",
+                "org.graalvm.*",
+                "io.micrometer.shaded.*"
+        ],
+        "java.project.sourcePaths": [
+                "PacketEX",
+                "Luyen Tap",
+                "LamLai",
+                "lib"
+        ],
+        "java.project.referencedLibraries": {
+                "include": [
+                        "lib/**/*.jar",
+                        "d:\\Code\\JAVA\\JDBC_SqlServer\\sqljdbc_12.4\\enu\\jars\\mssql-jdbc-12.4.2.jre11-sources.jar",
+                        "d:\\Code\\JAVA\\JDBC_SqlServer\\sqljdbc_12.4\\enu\\jars\\mssql-jdbc-12.4.2.jre8-sources.jar",
+                        "d:\\Code\\JAVA\\JDBC_SqlServer\\sqljdbc_12.4\\enu\\jars\\mssql-jdbc-12.4.2.jre11.jar",
+                        "d:\\Code\\JAVA\\JDBC_SqlServer\\sqljdbc_12.4\\enu\\jars\\mssql-jdbc-12.4.2.jre11-javadoc.jar"
+                ],
+                "exclude": [
+                        "d:\\Code\\JAVA\\JDBC_SqlServer\\sqljdbc_12.4\\enu\\jars\\mssql-jdbc-12.4.2.jre8.jar"
+                ]
+        }
+}
