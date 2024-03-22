@@ -136,7 +136,8 @@ interface BorrowDetailInterface
 *Nếu sinh viên trả sách thì sẽ TỰ ĐỘNG XÓA sinh viên ra khỏi database sau 3 NGÀY hoặc có thể TỰ XÓA*
 *expiredStatus = "Đã quá hạn" khi returnStatus = "Chưa trả sách" và ngày hiện tại > returnDay*
 *expiredStatus = "Còn hạn" khi returnStatus = "Chưa trả sách" và ngày hiện tại < returnDay*
-*expiredStatus = "Đã trả sách" khi returnStatus = "Đã trả sách"*
+*Khi returnStatus = "Đã trả sách" thì ngày trả phải bằng ngày hiện tại*
+*borrowDay không thể lớn hơn hoặc bằng return day*
 *quantity của sách được sinh viên mượn = quantity - 1*
 *Nếu sách nào có quantity = 0 thì sinh viên không thể tiếp tục mượn sách đó*
 *status = "Còn sách" nếu quantity > 0 và "Hết sách" khi quantity < 0*
@@ -145,6 +146,7 @@ interface BorrowDetailInterface
 *id sách = (tên viết tắt của sách) + (1 -> n)*
 *id sinh viên = (tên viết tắt nghành) + (1->n)*
 *id tác giả = (1->n)*
+
 
 ========================================Kiểm tra lỗi========================================
 1. Kiểm tra khi tạo tài khoản mới đã tồn tại id trong database hay chưa 
@@ -155,7 +157,7 @@ interface BorrowDetailInterface
 6. Table không cho phép chỉnh sửa	
 
 
-========================================Các bước để tạo 1 bảng========================================
+================================Các bước để tạo 1 bảng======================================
 1. Tạo RMI cho bảng trong server
 2. Tạo controllerPeform trong MainController
 3. getListBook trong MainController

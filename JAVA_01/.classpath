@@ -4,5 +4,6 @@
 	<classpathentry excluding="QLSV/src/|src/" kind="src" path="src"/>
 	<classpathentry kind="src" path="src/QLSV/src"/>
 	<classpathentry kind="src" path="src/src"/>
+	<classpathentry excluding="src/|src/QLSV/src/|src/src/" kind="src" path=""/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
