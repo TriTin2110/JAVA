@@ -12,8 +12,10 @@ public class Client {
 			PrintWriter pw = new PrintWriter(socket.getOutputStream());
 //			String command = "Thêm;Product;P2;Kem;10000;C1";
 //			String command = "Thêm;Company;C1;NCS;TPHCM";
+//			String command = "Sửa;Company;C2;NTT;TPHCM";
 //			String command = "Xóa;Product;P2";
-			String command = "Xóa;Company;C1";
+//			String command = "Xóa;Company;C1";
+			String command = "InDS;Company";
 			pw.println(command);
 			pw.flush();
 			pw.close();

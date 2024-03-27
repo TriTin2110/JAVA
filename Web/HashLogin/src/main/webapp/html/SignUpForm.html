@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link rel="stylesheet" href="../css/myCSS.css">
+</head>
+<body>
+<form action="../SignUpServlet" method="post" onsubmit="return checkingPassword()">
+	<table style="width: 400px; height: 320px;">
+		<tr>
+			<td colspan="4"><h1>Đăng ký</h1></td>
+		</tr>
+		
+		<tr>
+			<td><label>Tài khoản</label></td>
+			<td colspan="3"><input type="text" name="idAccount"></td>
+		</tr>
+		
+		<tr>
+			<td><label>Mật khẩu</label></td>
+			<td colspan="3"><input type="password" name="password" id="password"></td>
+		</tr>
+		
+		<tr>
+			<td><label>Xác nhận mật khẩu</label></td>
+			<td colspan="3"><input type="password" name="rePassword" id="rePassword"></td>
+		</tr>
+		
+		<tr>
+			<td colspan="4"><input type="submit" name="submit" value="Đăng ký"></td>
+		</tr>
+
+	</table>
+</body>
+<script>
+	function checkingPassword() {
+		var pass = document.getElementById("password").value;
+		var repass = document.getElementById("rePassword").value;
+		if(pass != repass)
+		{
+			alert("2 password không trùng nhau")
+			return false;
+		}
+		else {
+			alert("Đăng ký thành công!")
+			return true;
+		}
+	}
+</script>
+</html>
