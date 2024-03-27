@@ -1,0 +1,18 @@
+
+import java.rmi.Remote;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+
+import Model.ModelAuthor;
+
+public interface MainInterface extends Remote {
+	public int add(Object object) throws RemoteException;
+
+	public int remove(Object modelAuthor) throws RemoteException;
+
+	public int update(Object modelAuthor) throws RemoteException;
+
+	public ModelAuthor searching(Object modelAuthor) throws RemoteException;
+
+	public ArrayList<Object> Object() throws RemoteException;
+}

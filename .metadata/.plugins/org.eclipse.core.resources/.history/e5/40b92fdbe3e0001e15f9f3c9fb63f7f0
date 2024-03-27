@@ -1,0 +1,47 @@
+package Implements;
+
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
+
+import Interface.BorrowInterface;
+import Model.ModelBorrowDetail;
+
+public class BorrowImpl extends UnicastRemoteObject implements BorrowInterface {
+
+	protected BorrowImpl() throws RemoteException {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public int addBorrow(ModelBorrowDetail modelBorrowDetail) throws RemoteException {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int removeBorrow(ModelBorrowDetail modelBorrowDetail) throws RemoteException {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int updateBorrow(ModelBorrowDetail modelBorrowDetail) throws RemoteException {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public ModelBorrowDetail searchingBorrow(ModelBorrowDetail modelBorrowDetail) throws RemoteException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ArrayList<ModelBorrowDetail> printListBorrow() throws RemoteException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

@@ -1,0 +1,175 @@
+package Window.AddWindow;
+
+import java.awt.BorderLayout;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.rmi.Naming;
+
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
+
+import Interface.MainInterface;
+import Model.ModelAuthor;
+import MyClass.CheckingUserInputIssues;
+import MyClass.NumberController;
+import main.ClientMainFrame;
+
+public class AddAuthorWindow extends JFrame {
+
+	private static final long serialVersionUID = 1L;
+	private JPanel contentPane;
+	private JTextField textFieldAuthorID;
+	private JTextField textFieldAuthorName;
+	private JTextField textFieldAge;
+	private JTextField textFieldPhone;
+
+	/**
+	 * Launch the application.
+	 */
+
+	/**
+	 * Create the frame.
+	 */
+	public AddAuthorWindow(ClientMainFrame clientMainFrame) {
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 549, 310);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+
+		setContentPane(contentPane);
+		contentPane.setLayout(new BorderLayout(0, 0));
+
+		JPanel mainPanel = new JPanel();
+		contentPane.add(mainPanel, BorderLayout.CENTER);
+		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+
+		JPanel panelAuthorID = new JPanel();
+		mainPanel.add(panelAuthorID);
+		panelAuthorID.setLayout(new GridLayout(0, 2, 0, 0));
+
+		JLabel lblAuthorID = new JLabel("Id tác giả:");
+		lblAuthorID.setFont(new Font("Tahoma", Font.PLAIN, 19));
+		panelAuthorID.add(lblAuthorID);
+
+		textFieldAuthorID = new JTextField();
+		textFieldAuthorID.setFont(new Font("Tahoma", Font.PLAIN, 19));
+		panelAuthorID.add(textFieldAuthorID);
+		textFieldAuthorID.setColumns(10);
+
+		JPanel panelAuthorName = new JPanel();
+		mainPanel.add(panelAuthorName);
+		panelAuthorName.setLayout(new GridLayout(0, 2, 0, 0));
+
+		JLabel lblAuthorName = new JLabel("Tên tác giả:");
+		lblAuthorName.setFont(new Font("Tahoma", Font.PLAIN, 19));
+		panelAuthorName.add(lblAuthorName);
+
+		textFieldAuthorName = new JTextField();
+		textFieldAuthorName.setFont(new Font("Tahoma", Font.PLAIN, 19));
+		textFieldAuthorName.setColumns(10);
+		panelAuthorName.add(textFieldAuthorName);
+
+		JPanel panelAuthorCountry = new JPanel();
+		mainPanel.add(panelAuthorCountry);
+		panelAuthorCountry.setLayout(new GridLayout(0, 2, 0, 0));
+
+		JLabel lblAuthorCountry = new JLabel("Quốc gia:");
+		lblAuthorCountry.setFont(new Font("Tahoma", Font.PLAIN, 19));
+		panelAuthorCountry.add(lblAuthorCountry);
+
+		String[] country = { "Áo", "Ba Lan", "Canada", "Japan", "Korea", "US", "Việt Nam" };
+		JComboBox<String> comboBoxCountry = new JComboBox<String>(country);
+		comboBoxCountry.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		panelAuthorCountry.add(comboBoxCountry);
+		JPanel panelAuthorAge = new JPanel();
+		mainPanel.add(panelAuthorAge);
+		panelAuthorAge.setLayout(new GridLayout(0, 2, 0, 0));
+
+		JLabel lblAge = new JLabel("Tuổi:");
+		lblAge.setFont(new Font("Tahoma", Font.PLAIN, 19));
+		panelAuthorAge.add(lblAge);
+
+		textFieldAge = new JTextField();
+		textFieldAge.setFont(new Font("Tahoma", Font.PLAIN, 19));
+		textFieldAge.setColumns(10);
+		panelAuthorAge.add(textFieldAge);
+
+		JPanel panelAuthorPhone = new JPanel();
+		mainPanel.add(panelAuthorPhone);
+		panelAuthorPhone.setLayout(new GridLayout(0, 2, 0, 0));
+
+		JLabel lblPhone = new JLabel("Số điện thoại:");
+		lblPhone.setFont(new Font("Tahoma", Font.PLAIN, 19));
+		panelAuthorPhone.add(lblPhone);
+
+		textFieldPhone = new JTextField();
+		textFieldPhone.setFont(new Font("Tahoma", Font.PLAIN, 19));
+		textFieldPhone.setColumns(10);
+		panelAuthorPhone.add(textFieldPhone);
+
+		JPanel panelSubmit = new JPanel();
+		mainPanel.add(panelSubmit);
+		panelSubmit.setLayout(new BoxLayout(panelSubmit, BoxLayout.X_AXIS));
+
+		JButton btnAccept = new JButton("Xác nhận");
+		btnAccept.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		panelSubmit.add(btnAccept);
+
+		JButton btnCancel = new JButton("Hủy");
+		btnCancel.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		panelSubmit.add(btnCancel);
+		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		this.setLocationRelativeTo(null);
+		this.setVisible(true);
+		this.setTitle("Thêm tác giả mới!");
+		btnAccept.addActionListener(e -> {
+			try {
+				MainInterface mainInterface = (MainInterface) Naming.lookup("rmi://localhost:1026/test");
+				String[] textField = { this.textFieldAuthorID.getText(), this.textFieldAuthorName.getText(),
+						this.textFieldAge.getText(), this.textFieldPhone.getText(),
+						comboBoxCountry.getSelectedItem().toString() };
+				if (!CheckingUserInputIssues.checkingLackInformation(textField)) {
+					JOptionPane.showMessageDialog(this, "Xin vui lòng điền đầy đủ thông tin!");
+				} else {
+					int result = (NumberController.checkCharacterIntNumber(textField[2]) == 0
+							|| NumberController.checkCharacterIntNumber(textField[3]) == 0) ? 0 : 1;
+					if (result == 0) {
+						JOptionPane.showMessageDialog(this,
+								"Tuổi và SĐT chỉ được chứa ký tự số. Xin vui lòng kiểm tra lại!", "Lỗi!!",
+								JOptionPane.ERROR_MESSAGE);
+					} else {
+						ModelAuthor modelAuthor = new ModelAuthor(textField[0], textField[1],
+								Integer.parseInt(textField[2]), textField[3], textField[4]);
+						if (mainInterface.searching(modelAuthor, clientMainFrame.tableChosen) != null) {
+							JOptionPane.showMessageDialog(this, "Tác giả đã có id tồn tại trong danh sách", "Lỗi!!",
+									JOptionPane.ERROR_MESSAGE);
+						} else {
+						result = mainInterface.add((Object) modelAuthor, clientMainFrame.tableChosen);
+						JOptionPane.showMessageDialog(this, "Đã thêm thành công " + result + " dòng!");
+						System.out.println("Đã thêm tác giả mới thành công");
+						this.dispose();
+
+//						}
+					}
+				}
+
+			} catch (Exception e2) {
+				// TODO: handle exception
+				e2.printStackTrace();
+			}
+		});
+
+		btnCancel.addActionListener(e ->
+
+		{
+			this.dispose();
+		});
+	}
+}

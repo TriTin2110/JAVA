@@ -1,0 +1,30 @@
+package MyClass;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+
+import Implements.ConnectionMuonTraSach;
+import Model.ModelStudent;
+
+public class CheckingConstraint {
+	public void CheckingStudentConstraint(ModelStudent modelStudent) {
+		ArrayList<String> list = new ArrayList<String>();
+		try {
+			Connection connection = ConnectionMuonTraSach.getConnection();
+			String sql = "select * from BorrowDetail where id_student = ?";
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			ResultSet resultSet = preparedStatement.executeQuery();
+			while (resultSet.next()) {
+				list.add(resultSet.getString(1));
+			}
+			ConnectionMuonTraSach.closeConnection(connection);
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+
+		return list;
+	}
+}

@@ -1,0 +1,310 @@
+package Implements;
+
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+
+import Interface.MainInterface;
+import Model.ModelAuthor;
+import Model.ModelBook;
+import Model.ModelBorrowDetail;
+import Model.ModelStudent;
+
+public class MainImp extends UnicastRemoteObject implements MainInterface {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public MainImp() throws RemoteException {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public String getField(Object object, String currentTable, String method) {
+		String add = "";
+		String update = "";
+		String[] income = new String[9];
+		// Để thêm tác giả cần phải có những điều kiện sau:
+		/*
+		 * 1. Id và phone của tác giả không được trùng với những id khác Tạo 1 mảng
+		 * chuỗi Phân loại bảng Thêm record vào bảng
+		 */
+		System.out.println(currentTable);
+		switch (currentTable) {
+		case "Author":
+			income[0] = "author";
+			if (object != null) {
+				ModelAuthor modelAuthor = (ModelAuthor) object;
+				income[1] = modelAuthor.getId();
+				income[2] = modelAuthor.getName();
+				income[3] = modelAuthor.getCountry();
+				income[4] = modelAuthor.getAge() + "";
+				income[5] = modelAuthor.getPhone();
+				add = "insert into " + income[0] + " values('" + income[1] + "','" + income[2] + "','" + income[3]
+						+ "'," + income[4] + ",'" + income[5] + "')";
+				update = "update " + income[0] + " set name_" + income[0] + " = '" + income[2] + "', country = '"
+						+ income[3] + "', age= " + income[4] + ", phone = '" + income[5] + "' where id_" + income[0]
+						+ " = '" + income[1] + "'";
+			}
+
+			break;
+		case "Student":
+			income[0] = "student";
+			if (object != null) {
+				ModelStudent modelStudent = (ModelStudent) object;
+				income[1] = modelStudent.getId();
+				income[2] = modelStudent.getName();
+				income[3] = modelStudent.getSpecialized();
+				income[4] = modelStudent.getAge() + "";
+				income[5] = modelStudent.getPhone();
+				add = "insert into " + income[0] + " values('" + income[1] + "','" + income[2] + "','" + income[3]
+						+ "'," + income[4] + ",'" + income[5] + "')";
+				update = "update student set name_student = '" + income[2] + "', specialized = '" + income[3]
+						+ "', age = " + income[4] + ", phone = '" + income[5] + "' where id_student = '" + income[1]
+						+ "'";
+			}
+
+			break;
+		case "Book":
+			income[0] = "book";
+			if (object != null) {
+				ModelBook modelBook = (ModelBook) object;
+				income[1] = modelBook.getIdBook();
+				income[2] = modelBook.getNameBook();
+				income[3] = modelBook.getKindOfBook();
+				income[4] = modelBook.getAuthorID();
+				income[5] = modelBook.getStatus();
+				income[6] = modelBook.getQuantity() + "";
+				income[7] = modelBook.getPublicDay() + "";
+				add = "insert into " + income[0] + " values('" + income[1] + "','" + income[2] + "','" + income[3]
+						+ "','" + income[4] + "','" + income[5] + "'," + income[6] + ",'" + income[7] + "')";
+				update = "update book set name_book = '" + income[2] + "', kind_of_book ='" + income[3]
+						+ "', id_author = '" + income[4] + "', book_status = '" + income[5] + "', quantity = "
+						+ income[6] + ", public_day ='" + income[7] + "' where id_book = '" + income[1] + "'";
+			}
+
+			break;
+		case "Borrow":
+			income[0] = "BorrowDetail";
+			if (object != null) {
+				Date date = null;
+				ModelBorrowDetail modelBorrowDetail = (ModelBorrowDetail) object;
+				if (method.equals("Add")) {
+					date = Date.valueOf(modelBorrowDetail.getBorrowDay().toLocalDate().plusDays(7));
+				} else {
+					date = modelBorrowDetail.getReturnDay();
+				}
+				income[1] = modelBorrowDetail.getBorrowID();
+				income[2] = modelBorrowDetail.getBookID();
+				income[3] = modelBorrowDetail.getStudentID();
+				income[4] = modelBorrowDetail.getExpiredStatus();
+				income[5] = modelBorrowDetail.getReturnStatus();
+				income[6] = modelBorrowDetail.getBorrowDay() + "";
+				income[7] = date + "";
+				add = "insert into " + income[0] + " values('" + income[1] + "','" + income[2] + "','" + income[3]
+						+ "','Còn hạn','Chưa trả','" + income[6] + "','" + income[7] + "')";
+			}
+
+			break;
+		default:
+			break;
+		}
+		switch (method) {
+		case "Add":
+			return add;
+
+		case "Remove":
+			return "delete from " + income[0] + " where id_" + income[0] + " = '" + income[1] + "'";
+
+		case "Searching":
+			String id = "";
+			if (currentTable.equals("Borrow"))
+				id = "borrow";
+			else {
+				id = income[0];
+			}
+			return "select * from " + income[0] + " where id_" + id + " = '" + income[1] + "'";
+
+		case "Update":
+			return update;
+
+		case "SelectAll":
+			return "select * from " + income[0];
+		}
+		return null;
+	}
+
+	@Override
+	public int add(Object object, String currentTable) throws RemoteException {
+		String sql = getField(object, currentTable, "Add");
+		int result = 0;
+		Connection connection = ConnectionMuonTraSach.getConnection();
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			result = preparedStatement.executeUpdate();
+			ConnectionMuonTraSach.closeConnection(connection);
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	@Override
+	public int remove(Object object, String currentTable) throws RemoteException {
+		// TODO Auto-generated method stub
+		int result = 0;
+		String sql = getField(object, currentTable, "Remove");
+		try {
+			Connection connection = ConnectionMuonTraSach.getConnection();
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			result = preparedStatement.executeUpdate();
+			ConnectionMuonTraSach.closeConnection(connection);
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	@Override
+	public int update(Object object, String currentTable) throws RemoteException {
+		// TODO Auto-generated method stub
+		String sql = getField(object, currentTable, "Update");
+		System.out.println(sql);
+		int result = 0;
+		try {
+			if (searching(object, currentTable) != null) {
+				Connection connection = ConnectionMuonTraSach.getConnection();
+				PreparedStatement preparedStatement = connection.prepareStatement(sql);
+				result = preparedStatement.executeUpdate();
+				ConnectionMuonTraSach.closeConnection(connection);
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	@Override
+	public Object searching(Object object, String currentTable) throws RemoteException {
+		// TODO Auto-generated method stub
+		String sql = getField(object, currentTable, "Searching");
+		try {
+			Connection connection = ConnectionMuonTraSach.getConnection();
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			System.out.println(sql);
+			ResultSet resultSet = preparedStatement.executeQuery();
+			object = getList(resultSet, currentTable, false).get(0);
+			ConnectionMuonTraSach.closeConnection(connection);
+			return object;
+		} catch (Exception e) {
+			// TODO: handle exception
+			if (e instanceof IndexOutOfBoundsException)
+				System.out.println("");
+			else {
+				e.printStackTrace();
+			}
+
+		}
+		return null;
+	}
+
+	@Override
+	public ArrayList<Object> printList(String currentTable) throws RemoteException {
+		// TODO Auto-generated method stub
+		String sql = getField(null, currentTable, "SelectAll");
+		try {
+			Connection connection = ConnectionMuonTraSach.getConnection();
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			ResultSet resultSet = preparedStatement.executeQuery();
+			ArrayList<Object> list = getList(resultSet, currentTable, true);
+			ConnectionMuonTraSach.closeConnection(connection);
+			return list;
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		return null;
+
+	}
+
+	public ArrayList<Object> getList(ResultSet resultSet, String currentTable, boolean getAll) {
+		Connection connection = ConnectionMuonTraSach.getConnection();
+		ArrayList<Object> list = new ArrayList<Object>();
+		try {
+			switch (currentTable) {
+			case "Author":
+				out: while (resultSet.next()) {
+					ModelAuthor modelAuthor = new ModelAuthor(resultSet.getString("id_author"),
+							resultSet.getString("name_author"), resultSet.getInt("age"), resultSet.getString("phone"),
+							resultSet.getString("country"));
+					list.add(modelAuthor);
+					if (!getAll) {
+						System.out.println("Da04 thực hiện");
+						break out;
+					}
+				}
+				ConnectionMuonTraSach.closeConnection(connection);
+				return list;
+
+			case "Student":
+				out: while (resultSet.next()) {
+					ModelStudent modelStudent = new ModelStudent(resultSet.getString("id_student"),
+							resultSet.getString("name_student"), resultSet.getInt("age"), resultSet.getString("phone"),
+							resultSet.getString("specialized"));
+					list.add(modelStudent);
+					if (!getAll) {
+						break out;
+					}
+
+				}
+				System.out.println("Đã đến sinh viên");
+				ConnectionMuonTraSach.closeConnection(connection);
+				return list;
+
+			case "Book":
+				out: while (resultSet.next()) {
+					ModelBook modelBook = new ModelBook(resultSet.getString("id_book"),
+							resultSet.getString("name_book"), resultSet.getString("kind_of_book"),
+							resultSet.getString("id_author"), resultSet.getString("book_status"),
+							resultSet.getInt("quantity"), resultSet.getDate("public_day"));
+					list.add(modelBook);
+					if (!getAll) {
+						break out;
+					}
+				}
+				ConnectionMuonTraSach.closeConnection(connection);
+				return list;
+
+			case "Borrow":
+				out: while (resultSet.next()) {
+					ModelBorrowDetail modelBorrowDetail = new ModelBorrowDetail(resultSet.getString("id_borrow"),
+							resultSet.getString("id_book"), resultSet.getString("id_student"),
+							resultSet.getString("expired_status"), resultSet.getString("return_status"),
+							resultSet.getDate("borrow_day"), resultSet.getDate("return_day"));
+					list.add(modelBorrowDetail);
+					System.out.println("Đã đến mượn");
+					if (!getAll) {
+						break out;
+					}
+				}
+				ConnectionMuonTraSach.closeConnection(connection);
+				return list;
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+
+}

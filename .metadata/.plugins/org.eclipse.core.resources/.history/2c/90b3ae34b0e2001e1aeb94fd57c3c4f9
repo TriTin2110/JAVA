@@ -1,0 +1,20 @@
+package Interface;
+
+import java.rmi.Remote;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+
+import Model.ModelBorrowDetail;
+
+public interface BorrowInterface extends Remote {
+	public int addBorrow(ModelBorrowDetail modelBorrowDetail) throws RemoteException;
+
+	public int removeBorrow(ModelBorrowDetail modelBorrowDetail) throws RemoteException;
+
+	public int updateBorrow(ModelBorrowDetail modelBorrowDetail) throws RemoteException;
+
+	public ModelBorrowDetail searchingBorrow(ModelBorrowDetail modelBorrowDetail) throws RemoteException;
+
+	// In toàn bộ danh sách ra bảng
+	public ArrayList<ModelBorrowDetail> printListBorrow() throws RemoteException;
+}

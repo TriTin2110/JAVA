@@ -1,0 +1,19 @@
+package Interface;
+
+import java.rmi.Remote;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+
+import Model.ModelAuthor;
+
+public interface AuthorInterface extends Remote {
+	public int addAuthor(Object object) throws RemoteException;
+
+	public int removeAuthor(ModelAuthor modelAuthor) throws RemoteException;
+
+	public int updateAuthor(ModelAuthor modelAuthor) throws RemoteException;
+
+	public ModelAuthor searchingAuthor(ModelAuthor modelAuthor) throws RemoteException;
+
+	public ArrayList<ModelAuthor> printListAuthor() throws RemoteException;
+}

@@ -1,0 +1,150 @@
+package Window.ShowInfoWindow;
+
+import java.awt.BorderLayout;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.text.SimpleDateFormat;
+
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+
+import Model.ModelBorrowDetail;
+import MyClass.SetAttribute;
+
+public class ShowBorrowDetail extends JFrame {
+
+	private static final long serialVersionUID = 1L;
+	private JPanel contentPane;
+
+	/**
+	 * Launch the application.
+	 */
+
+	/**
+	 * Create the frame.
+	 */
+	public ShowBorrowDetail(ModelBorrowDetail modelBorrowDetail) {
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 450, 300);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+
+		setContentPane(contentPane);
+		contentPane.setLayout(new BorderLayout(0, 0));
+
+		JPanel mainPanel = new JPanel();
+		contentPane.add(mainPanel, BorderLayout.CENTER);
+		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+
+		JPanel panelBorrowId = new JPanel();
+		mainPanel.add(panelBorrowId);
+		panelBorrowId.setLayout(new GridLayout(0, 2, 0, 0));
+
+		JLabel lblAuthorId_1 = new JLabel("Mã mượn:");
+		lblAuthorId_1.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		panelBorrowId.add(lblAuthorId_1);
+
+		JLabel lblBorrowIdResult = new JLabel(modelBorrowDetail.getBorrowID());
+		lblBorrowIdResult.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		panelBorrowId.add(lblBorrowIdResult);
+
+		JPanel panelAuthorId = new JPanel();
+		mainPanel.add(panelAuthorId);
+		panelAuthorId.setLayout(new GridLayout(0, 2, 0, 0));
+
+		JLabel lblBookId = new JLabel("Mã sách:");
+		lblBookId.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		panelAuthorId.add(lblBookId);
+
+		JLabel lblBookResult = new JLabel(modelBorrowDetail.getBookID());
+		lblBookResult.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		panelAuthorId.add(lblBookResult);
+
+		JPanel panelStudentId = new JPanel();
+		mainPanel.add(panelStudentId);
+		panelStudentId.setLayout(new GridLayout(0, 2, 0, 0));
+
+		JLabel lblStudentId = new JLabel("Mã sinh viên:");
+		lblStudentId.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		panelStudentId.add(lblStudentId);
+
+		JLabel lblStudentIdResult = new JLabel(modelBorrowDetail.getStudentID());
+		lblStudentIdResult.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		panelStudentId.add(lblStudentIdResult);
+
+		JPanel panelExpiredStatus = new JPanel();
+		mainPanel.add(panelExpiredStatus);
+		panelExpiredStatus.setLayout(new GridLayout(0, 2, 0, 0));
+
+		JLabel lblExpiredStatus = new JLabel("Trạng thái:");
+		lblExpiredStatus.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		panelExpiredStatus.add(lblExpiredStatus);
+
+		String expiredStatus = modelBorrowDetail.getExpiredStatus();
+		JLabel lblExpiredStatusResult = new JLabel(expiredStatus);
+		lblExpiredStatusResult.setForeground(SetAttribute.setColor(expiredStatus));
+		lblExpiredStatusResult.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		panelExpiredStatus.add(lblExpiredStatusResult);
+
+		JPanel panelReturnStatus = new JPanel();
+		mainPanel.add(panelReturnStatus);
+		panelReturnStatus.setLayout(new GridLayout(0, 2, 0, 0));
+
+		JLabel lblReturnStatus = new JLabel("Trạng thái trả:");
+		lblReturnStatus.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		panelReturnStatus.add(lblReturnStatus);
+
+		JLabel lblReturnStatusResult = new JLabel(modelBorrowDetail.getReturnStatus());
+		lblReturnStatusResult.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		panelReturnStatus.add(lblReturnStatusResult);
+
+		JPanel panelBorrowDay = new JPanel();
+		mainPanel.add(panelBorrowDay);
+		panelBorrowDay.setLayout(new GridLayout(0, 2, 0, 0));
+
+		JLabel lblBorrowDay = new JLabel("Ngày mượn:");
+		lblBorrowDay.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		panelBorrowDay.add(lblBorrowDay);
+
+		String pattern = "dd-MM-yyyy";
+		SimpleDateFormat df = new SimpleDateFormat(pattern);
+		JLabel lblBorrowDayResult = new JLabel(df.format(modelBorrowDetail.getBorrowDay()));
+		lblBorrowDayResult.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		panelBorrowDay.add(lblBorrowDayResult);
+
+		JPanel panelReturnDay = new JPanel();
+		mainPanel.add(panelReturnDay);
+		panelReturnDay.setLayout(new GridLayout(0, 2, 0, 0));
+
+		JLabel lblReturnDay = new JLabel("Ngày trả:");
+		lblReturnDay.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		panelReturnDay.add(lblReturnDay);
+
+		JLabel lblReturnDayResult = new JLabel(df.format(modelBorrowDetail.getReturnDay()));
+		lblReturnDayResult.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		panelReturnDay.add(lblReturnDayResult);
+
+		JPanel panelSubmit = new JPanel();
+		mainPanel.add(panelSubmit);
+		panelSubmit.setLayout(new BoxLayout(panelSubmit, BoxLayout.X_AXIS));
+
+		JButton btnSubmit = new JButton("OK");
+		btnSubmit.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		panelSubmit.add(btnSubmit);
+
+		// Đóng cửa sổ này khi người dùng ấn chọn nút Ok
+		btnSubmit.addActionListener(e -> {
+			this.dispose();
+		});
+
+		this.setVisible(true);
+		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		this.setLocationRelativeTo(null);
+		this.setTitle("Thông tin chi tiết của tác giả!");
+	}
+
+}
